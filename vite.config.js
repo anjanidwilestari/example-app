@@ -1,6 +1,8 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
+import TableOne from '@/Components/Tables/TableOne.vue';
+
 
 export default defineConfig({
     plugins: [
@@ -19,12 +21,15 @@ export default defineConfig({
     ],
     resolve: {
         alias: {
-            '@': '/resources/js',  // Alias untuk folder js di resources Pages
-            '@@' : '/resources/js/TailAdmin/src'
+            '@': '/resources/js' // Alias untuk folder js di resources Pages
         },
         
     },
     server: {
         assetsInclude: ['**/*.vue'],
     },
+    components: {
+        TableOne,
+      },
+      
 });

@@ -1,3 +1,5 @@
+import C:\laragon\www\example-app\resources\js\Components\Tables\TableOne.vue
+
 <template>
   <div>
     <h1 class="text-xl font-semibold mb-4">Daftar Buku</h1>
@@ -5,7 +7,7 @@
       <!-- Menggunakan Link dari Inertia untuk navigasi -->
       <inertia-link :href="route('books.create')" class="bg-blue-500 text-white px-4 py-2 rounded">Tambah Buku</inertia-link>
     </div>
-    <table class="min-w-full bg-white border border-gray-300">
+    <TableOne :books="books" />
       <thead>
         <tr>
           <th class="px-4 py-2 border">Judul</th>
@@ -29,14 +31,20 @@
           </td>
         </tr>
       </tbody>
-    </table>
+      <TableOne :books="books" />
+    <!-- Menggunakan komponen TableOne -->
+    
   </div>
 </template>
 
 <script>
+import TableOne from '@/Components/Tables/TableOne.vue';
 export default {
   props: {
     books: Array,
+  },
+  components: {
+    TableOne, // Menambahkan komponen TableOne agar bisa digunakan di template
   },
 
   methods: {
