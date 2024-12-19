@@ -21,6 +21,7 @@ const app = createInertiaApp({
             .use(plugin) // Use Inertia.js plugin
             .use(ZiggyVue) // Use Ziggy for route helpers
             .component('inertia-link', InertiaLink) // Register InertiaLink globally
+            
             .mount(el); // Mount the app
     },
     progress: {

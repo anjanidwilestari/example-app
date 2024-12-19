@@ -5,8 +5,8 @@ import vue from '@vitejs/plugin-vue';
 export default defineConfig({
     plugins: [
         laravel({
-            input: 'resources/js/app.js',
-            refresh: true,
+            input: 'resources/js/app.js',  // Pastikan ini file utama Vue Anda
+            refresh: true,  // Auto-refresh ketika ada perubahan di file Vue
         }),
         vue({
             template: {
@@ -17,7 +17,14 @@ export default defineConfig({
             },
         }),
     ],
+    resolve: {
+        alias: {
+            '@': '/resources/js',  // Alias untuk folder js di resources Pages
+            '@@' : '/resources/js/TailAdmin/src'
+        },
+        
+    },
     server: {
         assetsInclude: ['**/*.vue'],
-      },
+    },
 });
