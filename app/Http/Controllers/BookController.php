@@ -75,54 +75,68 @@ class BookController extends Controller
     }
 
     // Update data buku
-    public function update(Request $request, Book $book)
-    {
-        // Validasi input
-        $request->validate([
-            'title' => 'nullable|string|max:255',
-            'author' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
-            'image' => 'nullable|image|max:2048',
-            'video' => 'nullable|mimes:mp4,avi,mov|max:10240',
-            'audio' => 'nullable|mimes:mp3,wav,ogg,m4a|max:10240',
-        ]);
+public function update(Request $request, Book $book)
+{
+    // Validasi input
+    $request->validate([
+        'title' => 'nullable|string|max:255',  // Make title nullable for update
+        'author' => 'nullable|string|max:255', // Make author nullable for update
+        'description' => 'nullable|string',
+        'image' => 'nullable|image|max:2048',
+        'video' => 'nullable|mimes:mp4,avi,mov|max:10240',
+        'audio' => 'nullable|mimes:mp3,wav,ogg,m4a|max:10240',
+    ]);
 
-        // Update kolom lainnya
-        $book->update([
-            'title' => $request->input('title'),
-            'author' => $request->input('author'),
-            'description' => $request->input('description'),
-        ]);
+    // Update kolom lainnya
+    $book->update([
+        'title' => $request->title ?? $book->title, // Use current title if not updated
+        'author' => $request->author ?? $book->author, // Use current author if not updated
+        'description' => $request->description ?? $book->description, // Use current description if not updated
+    ]);
 
-        // Menangani upload gambar jika ada
-        if ($request->hasFile('image')) {
-            if ($book->image_path && Storage::disk('public')->exists($book->image_path)) {
-                Storage::disk('public')->delete($book->image_path);
-            }
-            $book->image_path = $request->file('image')->store('images', 'public');
+    // Menangani upload gambar jika ada
+    if ($request->hasFile('image')) {
+        // Hapus gambar lama jika ada
+        if ($book->image_path && Storage::disk('public')->exists($book->image_path)) {
+            Storage::disk('public')->delete($book->image_path);
+            Log::info("Old image deleted: " . $book->image_path);
         }
 
-        // Menangani upload video jika ada
-        if ($request->hasFile('video')) {
-            if ($book->video_path && Storage::disk('public')->exists($book->video_path)) {
-                Storage::disk('public')->delete($book->video_path);
-            }
-            $book->video_path = $request->file('video')->store('videos', 'public');
-        }
-
-        // Menangani upload audio jika ada
-        if ($request->hasFile('audio')) {
-            if ($book->audio_path && Storage::disk('public')->exists($book->audio_path)) {
-                Storage::disk('public')->delete($book->audio_path);
-            }
-            $book->audio_path = $request->file('audio')->store('audio', 'public');
-        }
-
-        // Simpan perubahan buku termasuk perubahan path file
-        $book->save();
-
-        return redirect()->route('books.index');
+        // Simpan gambar baru dan perbarui path-nya
+        $newImagePath = $request->file('image')->store('images', 'public');
+        $book->image_path = $newImagePath;
+        Log::info("New image uploaded: " . $newImagePath);
     }
+
+    
+    // Menangani upload video jika ada
+    if ($request->hasFile('video')) {
+        // Hapus video lama jika ada
+        if ($book->video_path && Storage::disk('public')->exists($book->video_path)) {
+            Storage::disk('public')->delete($book->video_path);
+        }
+        // Simpan video baru dan perbarui path-nya
+        $book->video_path = $request->file('video')->store('videos', 'public');
+    }
+
+    // Menangani upload audio jika ada
+    if ($request->hasFile('audio')) {
+        // Hapus audio lama jika ada
+        if ($book->audio_path && Storage::disk('public')->exists($book->audio_path)) {
+            Storage::disk('public')->delete($book->audio_path);
+        }
+        // Simpan audio baru dan perbarui path-nya
+        $book->audio_path = $request->file('audio')->store('audio', 'public');
+    }
+
+    // Simpan perubahan buku termasuk perubahan path file
+    $book->save();
+
+    // Redirect ke halaman buku
+    return redirect()->route('books.index');
+}
+
+
 
 
     // Menghapus buku

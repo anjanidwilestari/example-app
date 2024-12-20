@@ -18,38 +18,26 @@ const form = useForm({
   title: props.book.title,
   author: props.book.author,
   description: props.book.description,
-  image: props.book.image, // Untuk gambar
-  video: props.book.video, // Untuk video
-  audio: props.book.audio, // Untuk audio
+  image: null, // Will be updated when a file is selected
+  video: null, // Will be updated when a file is selected
+  audio: null, // Will be updated when a file is selected
 });
 
-// Referensi untuk file input
-const imageInput = ref(null);
-const videoInput = ref(null);
-const audioInput = ref(null);
+// Fungsi untuk menangani perubahan file
+const handleFileChange = (type, event) => {
+  form[type] = event.target.files[0]; // Store the selected file to the corresponding type
+};
 
 // Fungsi untuk submit form
 const submitForm = () => {
-  const formData = new FormData();
-
-  // Menambahkan data form selain file
-  formData.append('title', form.title);
-  formData.append('author', form.author);
-  formData.append('description', form.description);
-
-  // Menambahkan file jika ada
-  if (form.image) formData.append('image', form.image);
-  if (form.video) formData.append('video', form.video);
-  if (form.audio) formData.append('audio', form.audio);
-
-  // Kirim data ke server
+  // Submit the form using inertia.js
   form.put(route('books.update', props.book.id), {
-    data: formData,
     onSuccess: () => {
-      form.reset();
+      form.reset(); // Reset form after successful submission
     },
     onError: (errors) => {
-      form.errors = errors; // Menangani error validasi
+      // Handling form validation errors
+      console.error(errors);
     },
   });
 };
@@ -61,16 +49,14 @@ const submitForm = () => {
     <AuthenticatedLayout>
       <template #header>
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">Edit Buku</h2>
-        <p class="mt-1 text-sm text-gray-600">
-          Update the details of the book here.
-        </p>
+        <p class="mt-1 text-sm text-gray-600">Update the details of the book here.</p>
       </template>
 
       <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
           <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
             <form @submit.prevent="submitForm" class="mt-6 space-y-6" enctype="multipart/form-data">
-              <!-- Title Input -->
+              <!-- Input Judul -->
               <div>
                 <InputLabel for="title" value="Book Title" />
                 <TextInput
@@ -82,7 +68,7 @@ const submitForm = () => {
                 <InputError :message="form.errors.title" class="mt-2" />
               </div>
 
-              <!-- Author Input -->
+              <!-- Input Penulis -->
               <div>
                 <InputLabel for="author" value="Author" />
                 <TextInput
@@ -94,7 +80,7 @@ const submitForm = () => {
                 <InputError :message="form.errors.author" class="mt-2" />
               </div>
 
-              <!-- Description Input -->
+              <!-- Input Deskripsi -->
               <div>
                 <InputLabel for="description" value="Description" />
                 <textarea
@@ -105,42 +91,60 @@ const submitForm = () => {
                 <InputError :message="form.errors.description" class="mt-2" />
               </div>
 
-              <!-- Image Input -->
+              <!-- Input Gambar -->
               <div>
                 <InputLabel for="image" value="Image (Optional)" />
                 <input
                   type="file"
                   id="image"
-                  ref="imageInput"
-                  @change="form.image = $event.target.files[0]"
+                  @change="handleFileChange('image', $event)"
                   class="mt-1 block w-full"
                 />
+                <!-- Display current file name if available -->
+                <span v-if="form.image">
+                  {{ form.image.name }}
+                </span>
+                <span v-if="!form.image && props.book.image_path">
+                  Current file: {{ props.book.image_path }}
+                </span>
                 <InputError :message="form.errors.image" class="mt-2" />
               </div>
 
-              <!-- Video Input -->
+              <!-- Input Video -->
               <div>
                 <InputLabel for="video" value="Video (Optional)" />
                 <input
                   type="file"
                   id="video"
-                  ref="videoInput"
-                  @change="form.video = $event.target.files[0]"
+                  @change="handleFileChange('video', $event)"
                   class="mt-1 block w-full"
                 />
+                <!-- Display current file name if available -->
+                <span v-if="form.video">
+                  {{ form.video.name }}
+                </span>
+                <span v-if="!form.video && props.book.video_path">
+                  Current file: {{ props.book.video_path }}
+                </span>
                 <InputError :message="form.errors.video" class="mt-2" />
               </div>
 
-              <!-- Audio Input -->
+              <!-- Input Audio -->
               <div>
                 <InputLabel for="audio" value="Audio (Optional)" />
                 <input
                   type="file"
                   id="audio"
-                  ref="audioInput"
-                  @change="form.audio = $event.target.files[0]"
+                  @change="handleFileChange('audio', $event)"
                   class="mt-1 block w-full"
                 />
+                <!-- Display current file name if available -->
+                <span v-if="form.audio">
+                  {{ form.audio.name }}
+                </span>
+                <span v-if="!form.audio && props.book.audio_path">
+                  Current file: {{ props.book.audio_path }}
+                </span>
                 <InputError :message="form.errors.audio" class="mt-2" />
               </div>
 

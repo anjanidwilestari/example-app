@@ -17,6 +17,9 @@ const form = ref({
   image: null,
   video: null,
   audio: null,
+  errors: {},  // Inisialisasi errors
+  processing: false,  // Menambahkan status processing untuk tombol
+  recentlySuccessful: false,  // Status jika berhasil
 });
 
 // Fungsi untuk menangani perubahan file
@@ -26,6 +29,7 @@ const handleFileChange = (type, event) => {
 
 // Fungsi untuk mengirim form ke server
 const submitForm = async () => {
+  form.value.processing = true;  // Set status processing
   try {
     const formData = new FormData();
     formData.append('title', form.value.title);
@@ -45,10 +49,11 @@ const submitForm = async () => {
     });
 
     alert('Buku berhasil disimpan!');
-    form.value = { title: '', author: '', description: '', image: null, video: null, audio: null }; // Reset form
+    form.value = { title: '', author: '', description: '', image: null, video: null, audio: null, errors: {}, processing: false, recentlySuccessful: true }; // Reset form
   } catch (error) {
     console.error('Gagal menyimpan buku:', error);
     alert('Terjadi kesalahan, silakan coba lagi.');
+    form.value.processing = false;  // Reset status processing jika gagal
   }
 };
 </script>
@@ -67,7 +72,7 @@ const submitForm = async () => {
       <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
           <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-            <form @submit.prevent="submitForm" enctype="multipart/form-data">
+            <form @submit.prevent="submitForm" class="mt-6 space-y-6" enctype="multipart/form-data">
               <!-- Input Judul -->
               <div>
                 <InputLabel for="title" value="Book Title"/>
@@ -97,7 +102,7 @@ const submitForm = async () => {
                 <textarea
                   id="description"
                   v-model="form.description"
-                  class=" form-input border border-gray-300 rounded px-4 py-2 w-full"
+                  class="form-input border border-gray-300 rounded px-4 py-2 w-full"
                 ></textarea>
                 <InputError :message="form.errors.description" class="mt-2" />
               </div>
@@ -109,12 +114,11 @@ const submitForm = async () => {
                   type="file"
                   id="image"
                   ref="imageInput"
-                  @change="form.image = $event.target.files[0]"
-                  class=" form-input mt-1 block w-full"
+                  @change="handleFileChange('image', $event)"
+                  class="mt-1 block w-full"
                 />
                 <InputError :message="form.errors.image" class="mt-2" />
               </div>
-
 
               <!-- Input Video -->
               <div>
@@ -123,8 +127,8 @@ const submitForm = async () => {
                   type="file"
                   id="video"
                   ref="videoInput"
-                  @change="form.video = $event.target.files[0]"
-                  class=" form-input mt-1 block w-full"
+                  @change="handleFileChange('video', $event)"
+                  class="mt-1 block w-full"
                 />
                 <InputError :message="form.errors.video" class="mt-2" />
               </div>
@@ -136,8 +140,8 @@ const submitForm = async () => {
                   type="file"
                   id="audio"
                   ref="audioInput"
-                  @change="form.audio = $event.target.files[0]"
-                  class=" form-input mt-1 block w-full"
+                  @change="handleFileChange('audio', $event)"
+                  class="mt-1 block w-full"
                 />
                 <InputError :message="form.errors.audio" class="mt-2" />
               </div>
