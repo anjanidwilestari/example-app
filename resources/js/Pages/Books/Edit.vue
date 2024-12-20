@@ -18,9 +18,9 @@ const form = useForm({
   title: props.book.title,
   author: props.book.author,
   description: props.book.description,
-  image: null, // Untuk gambar
-  video: null, // Untuk video
-  audio: null, // Untuk audio
+  image: props.book.image, // Untuk gambar
+  video: props.book.video, // Untuk video
+  audio: props.book.audio, // Untuk audio
 });
 
 // Referensi untuk file input

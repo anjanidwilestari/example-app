@@ -62,7 +62,7 @@ class BookController extends Controller
 
     $book->save();
     
-    return response()->json(['message' => 'Buku berhasil disimpan!'], 201);
+    return redirect()->route('books.index');
 }
 
 
