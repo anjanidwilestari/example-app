@@ -18,9 +18,9 @@ const form = useForm({
   title: props.book.title,
   author: props.book.author,
   description: props.book.description,
-  image: null, // Will be updated when a file is selected
-  video: null, // Will be updated when a file is selected
-  audio: null, // Will be updated when a file is selected
+  image: null,
+  video: null,
+  audio: null,
 });
 
 // Fungsi untuk menangani perubahan file
@@ -30,10 +30,21 @@ const handleFileChange = (type, event) => {
 
 // Fungsi untuk submit form
 const submitForm = () => {
-  // Submit the form using inertia.js
+  const data = new FormData(); // Membuat objek FormData untuk mengirim file dan data lainnya
+  data.append('title', form.title);
+  data.append('author', form.author);
+  data.append('description', form.description);
+  
+  // Menambahkan file hanya jika ada file yang dipilih
+  if (form.image) data.append('image', form.image);
+  if (form.video) data.append('video', form.video);
+  if (form.audio) data.append('audio', form.audio);
+  
+  // Mengirim data menggunakan inertia.js
   form.put(route('books.update', props.book.id), {
+    data,
     onSuccess: () => {
-      form.reset(); // Reset form after successful submission
+      form.reset(); // Reset form setelah submit sukses
     },
     onError: (errors) => {
       // Handling form validation errors
