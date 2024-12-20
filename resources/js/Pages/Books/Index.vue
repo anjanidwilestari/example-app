@@ -72,6 +72,7 @@ import { ref } from 'vue';
                   <td class="px-4 py-2 border">
                     <!-- Edit menggunakan Link -->
                     <inertia-link :href="route('books.edit', book.id)" class="bg-yellow-500 text-white px-4 py-2 rounded">Edit</inertia-link>
+                    <inertia-link :href="route('books.show', book.id)" class="bg-green-500 text-white px-4 py-2 rounded">Show</inertia-link>
 
                     <!-- Tombol untuk menghapus menggunakan Inertia -->
                     <button @click="deleteBook(book.id)" class="bg-red-500 text-white px-4 py-2 rounded">Hapus</button>

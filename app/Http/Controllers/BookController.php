@@ -19,6 +19,17 @@ class BookController extends Controller
         ]);
     }
 
+    public function show($id)
+    {
+        // Ambil data buku berdasarkan ID
+        $book = Book::findOrFail($id);
+
+        // Kirim data buku ke Vue component
+        return inertia('Books/Show', [
+            'book' => $book,
+        ]);
+    }
+
     // Menampilkan form untuk membuat buku baru
     public function create()
     {
