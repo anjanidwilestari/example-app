@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
-import TableOne from '@/Components/Tables/TableOne.vue';
 
 
 export default defineConfig({
@@ -28,8 +27,4 @@ export default defineConfig({
     server: {
         assetsInclude: ['**/*.vue'],
     },
-    components: {
-        TableOne,
-      },
-      
 });

@@ -16,6 +16,9 @@ return new class extends Migration
             $table->string('title');
             $table->string('author');
             $table->text('description');
+            $table->string('image_path')->nullable();  // Untuk gambar
+            $table->string('video_path')->nullable();  // Untuk video
+            $table->string('audio_path')->nullable();  // Untuk suara
             $table->timestamps();
         });
     }
