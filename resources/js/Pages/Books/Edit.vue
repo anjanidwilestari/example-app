@@ -41,7 +41,7 @@ const submitForm = () => {
   if (form.audio) data.append('audio', form.audio);
   
   // Mengirim data menggunakan inertia.js
-  form.put(route('books.update', props.book.id), {
+  form.post(route('books.update', props.book.id), {
     data,
     onSuccess: () => {
       form.reset(); // Reset form setelah submit sukses
