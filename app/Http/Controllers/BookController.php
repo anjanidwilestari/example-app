@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Book;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class BookController extends Controller
 {
@@ -26,43 +27,44 @@ class BookController extends Controller
 
     // Menyimpan buku baru
     public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'title' => 'required|string',
-            'author' => 'required|string',
-            'description' => 'required|string',
-            'image' => 'nullable|image|max:2048',
-            'video' => 'nullable|mimes:mp4,avi,mov|max:10240',
-            'audio' => 'nullable|mimes:mp3,wav,ogg|max:10240',
-        ]);
+{
+    // Tambahkan log untuk memeriksa apakah file sudah diterima
+    Log::info('Request data: ', $request->all());
+    Log::info('Files: ', $request->files->all());
 
-        $book = new Book();
-        $book->title = $validated['title'];
-        $book->author = $validated['author'];
-        $book->description = $validated['description'];
+    $request->validate([
+        'title' => 'required|string',
+        'author' => 'required|string',
+        'description' => 'nullable|string',
+        'image' => 'nullable|image|max:2048',  // Maksimal 2MB untuk gambar
+        'video' => 'nullable|mimes:mp4,avi,mov|max:10240',  // Maksimal 10MB untuk video
+        'audio' => 'nullable|mimes:mp3,wav,ogg,m4a|max:10240',  // Maksimal 10MB untuk audio
+    ]);
 
-        // Menyimpan file gambar
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('images', 'public'); // Menyimpan di disk public
-            $book->image_path = $imagePath;
-        }
+    // Proses penyimpanan file
+    $book = new Book();
+    $book->title = $request->title;
+    $book->author = $request->author;
+    $book->description = $request->description;
 
-        // Menyimpan file video
-        if ($request->hasFile('video')) {
-            $videoPath = $request->file('video')->store('videos', 'public');
-            $book->video_path = $videoPath;
-        }
-
-        // Menyimpan file audio
-        if ($request->hasFile('audio')) {
-            $audioPath = $request->file('audio')->store('audio', 'public');
-            $book->audio_path = $audioPath;
-        }
-
-        $book->save();
-
-        return redirect()->route('books.index');
+    // Menyimpan file jika ada
+    if ($request->hasFile('image')) {
+        $book->image_path = $request->file('image')->store('images', 'public');
     }
+    
+    if ($request->hasFile('video')) {
+        $book->video_path = $request->file('video')->store('videos', 'public');
+    }
+    
+    if ($request->hasFile('audio')) {
+        $book->audio_path = $request->file('audio')->store('audio', 'public');
+    }
+
+    $book->save();
+    
+    return response()->json(['message' => 'Buku berhasil disimpan!'], 201);
+}
+
 
     // Menampilkan form untuk mengedit buku
     public function edit(Book $book)
@@ -77,12 +79,12 @@ class BookController extends Controller
     {
         // Validasi input
         $request->validate([
-            'title' => 'required|string|max:255',
-            'author' => 'required|string|max:255',
+            'title' => 'nullable|string|max:255',
+            'author' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'image' => 'nullable|image|max:2048',
             'video' => 'nullable|mimes:mp4,avi,mov|max:10240',
-            'audio' => 'nullable|mimes:mp3,wav,ogg|max:10240',
+            'audio' => 'nullable|mimes:mp3,wav,ogg,m4a|max:10240',
         ]);
 
         // Update kolom lainnya
@@ -94,38 +96,26 @@ class BookController extends Controller
 
         // Menangani upload gambar jika ada
         if ($request->hasFile('image')) {
-            // Hapus gambar lama jika ada
             if ($book->image_path && Storage::disk('public')->exists($book->image_path)) {
                 Storage::disk('public')->delete($book->image_path);
             }
-
-            // Simpan gambar baru dan perbarui path-nya
-            $imagePath = $request->file('image')->store('images', 'public');
-            $book->image_path = $imagePath;
+            $book->image_path = $request->file('image')->store('images', 'public');
         }
 
         // Menangani upload video jika ada
         if ($request->hasFile('video')) {
-            // Hapus video lama jika ada
             if ($book->video_path && Storage::disk('public')->exists($book->video_path)) {
                 Storage::disk('public')->delete($book->video_path);
             }
-
-            // Simpan video baru dan perbarui path-nya
-            $videoPath = $request->file('video')->store('videos', 'public');
-            $book->video_path = $videoPath;
+            $book->video_path = $request->file('video')->store('videos', 'public');
         }
 
         // Menangani upload audio jika ada
         if ($request->hasFile('audio')) {
-            // Hapus audio lama jika ada
             if ($book->audio_path && Storage::disk('public')->exists($book->audio_path)) {
                 Storage::disk('public')->delete($book->audio_path);
             }
-
-            // Simpan audio baru dan perbarui path-nya
-            $audioPath = $request->file('audio')->store('audio', 'public');
-            $book->audio_path = $audioPath;
+            $book->audio_path = $request->file('audio')->store('audio', 'public');
         }
 
         // Simpan perubahan buku termasuk perubahan path file
@@ -133,6 +123,7 @@ class BookController extends Controller
 
         return redirect()->route('books.index');
     }
+
 
     // Menghapus buku
     public function destroy(Book $book)

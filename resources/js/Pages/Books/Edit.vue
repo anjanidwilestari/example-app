@@ -8,24 +8,43 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
+// Prop Book yang diterima dari controller
 const props = defineProps({
-  book: Object, // Buku yang akan diedit
+  book: Object,
 });
 
+// Inisialisasi form dengan data buku
 const form = useForm({
   title: props.book.title,
   author: props.book.author,
   description: props.book.description,
-  image_path: props.book.image_path,
+  image: null, // Untuk gambar
+  video: null, // Untuk video
+  audio: null, // Untuk audio
 });
 
-const titleInput = ref(null);
-const authorInput = ref(null);
-const descriptionInput = ref(null);
+// Referensi untuk file input
 const imageInput = ref(null);
+const videoInput = ref(null);
+const audioInput = ref(null);
 
+// Fungsi untuk submit form
 const submitForm = () => {
+  const formData = new FormData();
+
+  // Menambahkan data form selain file
+  formData.append('title', form.title);
+  formData.append('author', form.author);
+  formData.append('description', form.description);
+
+  // Menambahkan file jika ada
+  if (form.image) formData.append('image', form.image);
+  if (form.video) formData.append('video', form.video);
+  if (form.audio) formData.append('audio', form.audio);
+
+  // Kirim data ke server
   form.put(route('books.update', props.book.id), {
+    data: formData,
     onSuccess: () => {
       form.reset();
     },
@@ -50,63 +69,79 @@ const submitForm = () => {
       <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
           <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-            <form @submit.prevent="submitForm" class="mt-6 space-y-6">
+            <form @submit.prevent="submitForm" class="mt-6 space-y-6" enctype="multipart/form-data">
               <!-- Title Input -->
               <div>
                 <InputLabel for="title" value="Book Title" />
-
                 <TextInput
                   id="title"
-                  ref="titleInput"
                   v-model="form.title"
                   type="text"
                   class="mt-1 block w-full"
                 />
-
                 <InputError :message="form.errors.title" class="mt-2" />
               </div>
 
               <!-- Author Input -->
               <div>
                 <InputLabel for="author" value="Author" />
-
                 <TextInput
                   id="author"
-                  ref="authorInput"
                   v-model="form.author"
                   type="text"
                   class="mt-1 block w-full"
                 />
-
                 <InputError :message="form.errors.author" class="mt-2" />
               </div>
 
               <!-- Description Input -->
               <div>
                 <InputLabel for="description" value="Description" />
-
                 <textarea
                   id="description"
-                  ref="descriptionInput"
                   v-model="form.description"
                   class="border border-gray-300 rounded px-4 py-2 w-full"
                 ></textarea>
-
                 <InputError :message="form.errors.description" class="mt-2" />
               </div>
 
-              <!-- Image Path Input -->
+              <!-- Image Input -->
               <div>
-                <InputLabel for="image_path" value="Image Path (Optional)" />
-
-                <textarea
-                  id="image_path"
+                <InputLabel for="image" value="Image (Optional)" />
+                <input
+                  type="file"
+                  id="image"
                   ref="imageInput"
-                  v-model="form.image_path"
-                  class="border border-gray-300 rounded px-4 py-2 w-full"
-                ></textarea>
+                  @change="form.image = $event.target.files[0]"
+                  class="mt-1 block w-full"
+                />
+                <InputError :message="form.errors.image" class="mt-2" />
+              </div>
 
-                <InputError :message="form.errors.image_path" class="mt-2" />
+              <!-- Video Input -->
+              <div>
+                <InputLabel for="video" value="Video (Optional)" />
+                <input
+                  type="file"
+                  id="video"
+                  ref="videoInput"
+                  @change="form.video = $event.target.files[0]"
+                  class="mt-1 block w-full"
+                />
+                <InputError :message="form.errors.video" class="mt-2" />
+              </div>
+
+              <!-- Audio Input -->
+              <div>
+                <InputLabel for="audio" value="Audio (Optional)" />
+                <input
+                  type="file"
+                  id="audio"
+                  ref="audioInput"
+                  @change="form.audio = $event.target.files[0]"
+                  class="mt-1 block w-full"
+                />
+                <InputError :message="form.errors.audio" class="mt-2" />
               </div>
 
               <!-- Submit Button -->
