@@ -34,9 +34,12 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('/welcome', [BookController::class, 'welcome'])->name('welcome'); // Tampilan Welcome User
+
+// Route::get('/dashboard', function () {
+//     return Inertia::render('Dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     //Profile
@@ -44,6 +47,10 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // Dashboard Admin
+    Route::get('/dashboard', [BookController::class, 'dashboard'])->name('dashboard'); // Tampilan Welcome Admin
+    Route::get('/dashboard-edit', [BookController::class, 'dashboardedit'])->name('dashboard.edit');
+        
     //Buku
     Route::get('/books', [BookController::class, 'index'])->name('books.index');
     Route::get('/books/{id}', [BookController::class, 'show'])->name('books.show');

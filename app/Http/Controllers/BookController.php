@@ -10,6 +10,46 @@ use Illuminate\Support\Facades\Log;
 
 class BookController extends Controller
 {
+    //Dashboard (tampilan user)
+    public function welcome()
+    {
+        // Ambil buku dari database
+        // $firstBook = Book::first(); // Ambil buku pertama
+        $firstBook = Book::skip(1)->first(); // Ambil buku kedua
+
+        // Kirim data buku pertama ke Vue melalui Inertia
+        return Inertia::render('WelcomeUser', [
+            'books' => Book::all(), // Mengirimkan semua buku jika dibutuhkan
+            'firstBook' => $firstBook, // Mengirimkan hanya buku pertama
+        ]);
+    }
+    //Dashboard (tampilan admin)
+    public function dashboard()
+    {
+        // Ambil buku dari database
+        // $firstBook = Book::first(); // Ambil buku pertama
+        $firstBook = Book::skip(1)->first(); // Ambil buku kedua
+
+        // Kirim data buku pertama ke Vue melalui Inertia
+        return Inertia::render('Dashboard', [
+            'books' => Book::all(), // Mengirimkan semua buku jika dibutuhkan
+            'firstBook' => $firstBook, // Mengirimkan hanya buku pertama
+        ]);
+    }
+
+    public function dashboardedit()
+    {
+        // Ambil semua buku dari database
+        $books = Book::all();
+
+        // Kirimkan data buku ke halaman edit
+        return Inertia::render('DashboardEdit', [
+            'books' => $books,
+            'firstBook' => $books->first() // Buku pertama yang akan ditampilkan di awal
+        ]);
+    }
+
+
     // Menampilkan daftar buku
     public function index()
     {
