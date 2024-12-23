@@ -11,25 +11,32 @@
           <div class="p-6 text-gray-900">Buku yang Ditampilkan</div>
           
           <!-- Menampilkan data buku yang dipilih -->
-          <h1 class="text-5xl md:text-6xl font-bold mt-8">{{ currentBook.title }}</h1>
-          <h4 class="text-2xl font-semibold mt-16">{{ currentBook.author }}</h4>
-          <p class="text-lg mt-4">{{ currentBook.description }}</p>
+          <div v-if="currentBook">
+            <h1 class="text-5xl md:text-6xl font-bold mt-8">{{ currentBook.title }}</h1>
+            <h4 class="text-2xl font-semibold mt-16">{{ currentBook.author }}</h4>
+            <p class="text-lg mt-4">{{ currentBook.description }}</p>
 
-          <!-- Gambar Buku -->
-          <div class="imagecontainer md:relative md:w-full lg:xl:w-1/2">
-            <div class="background-rectangle absolute top-0 left-0 w-full h-full"></div>
-            <img
-              alt="Image Buku"
-              loading="lazy"
-              width="1000"
-              height="1000"
-              decoding="async"
-              class="foreground-image relative z-10"
-              :src="`/storage/${currentBook.image_path}`"
-              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            />
+            <!-- Gambar Buku -->
+            <div class="imagecontainer md:relative md:w-full lg:xl:w-1/2">
+              <div class="background-rectangle absolute top-0 left-0 w-full h-full"></div>
+              <img
+                alt="Image Buku"
+                loading="lazy"
+                width="1000"
+                height="1000"
+                decoding="async"
+                class="foreground-image relative z-10"
+                :src="`/storage/${currentBook.image_path}`"
+                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              />
+            </div>
           </div>
           
+          <!-- Pesan jika tidak ada buku yang dipilih -->
+          <div v-else>
+            <p class="text-lg text-red-500 mt-8">Belum ada buku yang dipilih.</p>
+          </div>
+
           <!-- Tombol Edit Tampilan -->
           <inertia-link
             :href="route('dashboard.edit')"
@@ -45,9 +52,7 @@
 
 <script setup>
 import { Head } from '@inertiajs/vue3';
-import { ref } from 'vue';
 import { usePage } from '@inertiajs/vue3';
-import { useRoute } from 'vue-router';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
 const { currentBook } = usePage().props; // Mendapatkan data buku yang sedang ditampilkan

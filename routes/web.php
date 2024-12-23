@@ -5,6 +5,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\SettingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,14 +18,6 @@ use App\Http\Controllers\BookController;
 |
 */
 
-
-
-
-
-
-
-
-
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
@@ -34,8 +27,7 @@ Route::get('/', function () {
     ]);
 });
 
-
-Route::get('/welcome', [BookController::class, 'welcome'])->name('welcome'); // Tampilan Welcome User
+Route::get('/welcome', [SettingController::class, 'welcome'])->name('welcome'); // Tampilan Welcome User
 
 // Route::get('/dashboard', function () {
 //     return Inertia::render('Dashboard');
@@ -48,9 +40,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Dashboard Admin
-    Route::get('/dashboard', [BookController::class, 'dashboard'])->name('dashboard');
-    Route::get('/dashboard-edit', [BookController::class, 'dashboardedit'])->name('dashboard.edit');
-    Route::post('/save-selected-book', [BookController::class, 'saveSelectedBook'])->name('saveSelectedBook');
+    Route::get('/dashboard', [SettingController::class, 'dashboard'])->name('dashboard');
+    Route::get('/dashboard-edit', [SettingController::class, 'dashboardedit'])->name('dashboard.edit');
+    Route::post('/save-selected-book', [SettingController::class, 'saveSelectedBook'])->name('saveSelectedBook');
         
     //Buku
     Route::get('/books', [BookController::class, 'index'])->name('books.index');

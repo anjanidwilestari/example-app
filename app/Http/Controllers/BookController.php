@@ -10,74 +10,7 @@ use Illuminate\Support\Facades\Log;
 
 class BookController extends Controller
 {
-    //Dashboard (tampilan user)
-    public function welcome()
-    {
-         // Ambil ID buku yang telah dipilih dari session
-         $selectedBookId = session('selected_book_id', null);
-
-         // Jika ada buku yang dipilih, ambil datanya
-         $currentBook = $selectedBookId ? Book::find($selectedBookId) : Book::first(); // Default ke buku pertama
- 
-         return Inertia::render('WelcomeUser', [
-             'books' => Book::all(),
-             'currentBook' => $currentBook, // Buku yang dipilih
-         ]);
-    }
-
-    // Menampilkan halaman dashboard (admin)
-    public function dashboard()
-    {
-        // Ambil ID buku yang telah dipilih dari session
-        $selectedBookId = session('selected_book_id', null);
-
-        // Jika ada buku yang dipilih, ambil datanya
-        $currentBook = $selectedBookId ? Book::find($selectedBookId) : Book::first(); // Default ke buku pertama
-
-        return Inertia::render('Dashboard', [
-            'books' => Book::all(),
-            'currentBook' => $currentBook, // Buku yang dipilih
-        ]);
-    }
-
-    // Menampilkan halaman edit dashboard
-    public function dashboardedit(Request $request)
-    {
-        // Ambil semua buku untuk dropdown
-        $books = Book::all();
-
-        // Jika ada 'book_id' dalam request, simpan ke session
-        if ($request->has('book_id')) {
-            $bookId = $request->input('book_id');
-            session(['selected_book_id' => $bookId]);
-        }
-
-        // Ambil ID buku yang telah disimpan di session
-        $selectedBookId = session('selected_book_id', null);
-
-        // Ambil buku yang dipilih (jika ada)
-        $currentBook = $selectedBookId ? Book::find($selectedBookId) : null;
-
-        return Inertia::render('DashboardEdit', [
-            'books' => $books,
-            'currentBook' => $currentBook, // Menampilkan buku yang dipilih
-        ]);
-    }
-
-    // Menyimpan pilihan buku yang dipilih
-    public function saveSelectedBook(Request $request)
-    {
-        // Validasi input untuk memastikan ada book_id
-        $request->validate([
-            'book_id' => 'required|exists:books,id',
-        ]);
-
-        // Simpan ID buku yang dipilih dalam session
-        session(['selected_book_id' => $request->input('book_id')]);
-
-        return redirect()->route('dashboard');
-    }
-
+    
 
     // Menampilkan daftar buku
     public function index()
