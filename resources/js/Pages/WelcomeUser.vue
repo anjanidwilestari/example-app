@@ -1,16 +1,13 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
-
-import { defineProps } from 'vue';
+import { usePage } from '@inertiajs/vue3';
 
 // Mendefinisikan props yang diterima, di sini kita menerima `firstBook` dari controller
-const props = defineProps({
-  firstBook: Object,  // Buku pertama yang diterima dari controller
-});
+const { currentBook } = usePage().props; // Mendapatkan data buku yang sedang ditampilkan
 </script>
 
 <template>
-    <Head title="Welcome" />
+    <Head title="Welcome"></Head>
 
     <div
         class="relative sm:flex sm:justify-center sm:items-center min-h-screen bg-dots-darker bg-center bg-gray-100 dark:bg-dots-lighter dark:bg-gray-900 selection:bg-red-500 selection:text-white"
@@ -51,9 +48,9 @@ const props = defineProps({
                                             <div class="flex flex-col md:grid md:grid-cols-3 gap-4">
                                             <!-- Left Column -->
                                             <div class="md:col-span-1 order-2 md:order-1">
-                                                <h1 class="text-5xl md:text-6xl font-bold">{{ props.firstBook.title }}</h1>
-                                                <h4 class="text-2xl font-semibold mt-16">{{ props.firstBook.author }}</h4>
-                                                <p class="text-lg mt-4">{{ props.firstBook.description }}</p>
+                                                <h1 class="text-5xl md:text-6xl font-bold">{{ currentBook.title }}</h1>
+                                                <h4 class="text-2xl font-semibold mt-16">{{ currentBook.author }}</h4>
+                                                <p class="text-lg mt-4">{{ currentBook.description }}</p>
                                                 <button
                                                 type="button"
                                                 class="text-white bg-gradient-to-b from-pink-100 via-pink-400 to-pink-500 hover:bg-gradient-to-r focus:ring-4 focus:outline-none focus:ring-pink-300 dark:focus:ring-pink-800 shadow-lg shadow-pink-500/50 dark:shadow-lg dark:shadow-pink-800/80 font-medium rounded-lg text-sm px-6 py-3.5 text-center me-2 mb-2 mt-12"
@@ -74,7 +71,7 @@ const props = defineProps({
                                                     decoding="async"
                                                     class="foreground-image relative z-10"
                                                     style="color: transparent"
-                                                    :src="`/storage/${props.firstBook.image_path}`"  
+                                                    :src="`/storage/${currentBook.image_path}`"  
                                                     sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                                                 />
                                                 </div>
@@ -100,9 +97,6 @@ const props = defineProps({
             <div class="flex justify-center mt-16 px-6 sm:items-center sm:justify-between">
                 <div class="text-center text-sm sm:text-start">&nbsp;</div>
 
-                <div class="text-center text-sm text-gray-500 dark:text-gray-400 sm:text-end sm:ms-0">
-                    Laravel v{{ laravelVersion }} (PHP v{{ phpVersion }})
-                </div>
             </div>
         </div>
     </div>

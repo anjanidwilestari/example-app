@@ -48,8 +48,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Dashboard Admin
-    Route::get('/dashboard', [BookController::class, 'dashboard'])->name('dashboard'); // Tampilan Welcome Admin
+    Route::get('/dashboard', [BookController::class, 'dashboard'])->name('dashboard');
     Route::get('/dashboard-edit', [BookController::class, 'dashboardedit'])->name('dashboard.edit');
+    Route::post('/save-selected-book', [BookController::class, 'saveSelectedBook'])->name('saveSelectedBook');
         
     //Buku
     Route::get('/books', [BookController::class, 'index'])->name('books.index');
