@@ -38,6 +38,11 @@ const showingNavigationDropdown = ref(false);
                                     Buku
                                 </NavLink>
                             </div>
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink :href="route('footers.index')" :active="route().current('footers.index')">
+                                    Footer
+                                </NavLink>
+                            </div>
                         </div>
 
                         <div class="hidden sm:flex sm:items-center sm:ms-6">

@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\FooterController;
+use App\Http\Controllers\SubFooterController;
+use App\Http\Controllers\IsiSubFooterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,6 +56,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/books/{book}', [BookController::class, 'update'])->name('books.update');
     Route::delete('/books/{book}', [BookController::class, 'destroy'])->name('books.destroy');
 
+    //Footer
+    Route::get('/footers', [BookController::class, 'index'])->name('footers.index');
+    Route::get('/footers-create', [BookController::class, 'index'])->name('footers.create');
+    Route::get('/footers', [BookController::class, 'index'])->name('footers.index');
+    Route::resource('footers', FooterController::class);
+    Route::resource('sub-footers', SubFooterController::class);
+    Route::resource('isi-sub-footers', IsiSubFooterController::class);
 
 });
 
