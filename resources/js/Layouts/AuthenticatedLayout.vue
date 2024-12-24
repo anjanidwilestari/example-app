@@ -39,6 +39,11 @@ const showingNavigationDropdown = ref(false);
                                 </NavLink>
                             </div>
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink :href="route('testimonis.index')" :active="route().current('testimonis.index')">
+                                    Testimoni
+                                </NavLink>
+                            </div>
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink :href="route('footers.index')" :active="route().current('footers.index')">
                                     Footer
                                 </NavLink>

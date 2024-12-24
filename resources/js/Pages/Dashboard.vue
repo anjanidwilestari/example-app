@@ -37,6 +37,37 @@
             <p class="text-lg text-red-500 mt-8">Belum ada buku yang dipilih.</p>
           </div>
 
+          <!-- Section with 3 Cards and Testimonis -->
+          <div v-if="testimonis.length" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 lg:gap-8">
+                        <div
+                            v-for="(testimoni, index) in testimonis.slice(0, 3)"
+                            :key="testimoni.id"
+                            class="scale-100 p-6 bg-white dark:bg-gray-800/50 dark:bg-gradient-to-bl from-gray-700/50 via-transparent dark:ring-1 dark:ring-inset dark:ring-white/5 rounded-lg shadow-2xl shadow-gray-500/20 dark:shadow-none flex motion-safe:hover:scale-[1.01] transition-all duration-250 focus:outline focus:outline-2 focus:outline-red-500"
+                        >
+                            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 flex flex-col items-center">
+                                <img
+                                    v-if="testimoni.photo"
+                                    :src="`/storage/photos/${testimoni.photo}`"
+                                    alt="Foto Profile"
+                                    class="w-20 h-20 rounded-full object-cover mb-4"
+                                />
+                                <p v-else class="w-20 h-20 rounded-full bg-gray-300 mb-4"></p>
+                                <h3 class="text-xl font-semibold">{{ testimoni.name_customer }}</h3>
+                                <p class="text-gray-500 mb-4">{{ testimoni.workplace }}</p>
+                                <p class="text-gray-700 dark:text-gray-300 text-sm">{{ testimoni.review }}</p>
+                                <div v-if="testimoni.status" class="mt-4 px-4 py-2 bg-green-500 text-white rounded-md text-xs">
+                                    <span>Aktif</span>
+                                </div>
+                                <div v-else class="mt-4 px-4 py-2 bg-gray-400 text-white rounded-md text-xs">
+                                    <span>Non-Aktif</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-else class="text-center mt-6">
+                        <p class="text-gray-500">Belum ada testimoni untuk ditampilkan.</p>
+                    </div>
+
           <!-- Tombol Edit Tampilan -->
           <inertia-link
             :href="route('dashboard.edit')"
@@ -55,6 +86,6 @@ import { Head } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
-const { currentBook } = usePage().props; // Mendapatkan data buku yang sedang ditampilkan
+const { currentBook, testimonis } = usePage().props; // Mendapatkan data buku yang sedang ditampilkan
 
 </script>
