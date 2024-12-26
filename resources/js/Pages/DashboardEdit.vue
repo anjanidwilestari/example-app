@@ -1,5 +1,5 @@
 <template>
-  <Head title="Edit Dashboard"></Head>
+  <Head title="Edit Tampilan Dashboard"></Head>
   <AuthenticatedLayout>
     <template #header>
       <h2 class="font-semibold text-xl text-gray-800 leading-tight">Edit Tampilan</h2>
@@ -7,40 +7,41 @@
 
     <div class="py-12">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-          <div class="p-6 text-gray-900">Pilih Buku untuk Ditampilkan</div>
+        <div class="bg-white shadow-sm sm:rounded-lg p-6">
+          <!-- Form untuk memilih setting -->
+          <form @submit.prevent="saveSettings">
+            <input type="hidden" name="_token" :value="csrfToken" />
 
-          <!-- Dropdown Buku -->
-          <select v-model="selectedBookId" @change="updateBook" class="p-2 border rounded">
-            <option v-for="book in books" :key="book.id" :value="book.id">
-              {{ book.title }} - {{ book.author }}
-            </option>
-          </select>
+            <!-- Pilih Buku -->
+            <h3 class="text-2xl font-bold mb-4">Pilih Buku</h3>
+            <select v-model="selectedBookId" id="book" class="form-select mt-1 block w-full">
+              <option v-for="book in books" :key="book.id" :value="book.id">
+                {{ book.title }}
+              </option>
+            </select>
 
-          <div class="mt-6">
-            <p class="text-gray-900">Pilih Testimoni untuk Ditampilkan</p>
-
-            <!-- Checkbox untuk memilih beberapa testimoni -->
-            <div v-for="testimoni in testimonis" :key="testimoni.id" class="flex items-center">
-              <input
-                type="checkbox"
-                :id="'testimoni-' + testimoni.id"
-                v-model="selectedTestimonisIds"
-                :value="testimoni.id"
-                class="mr-2"
-              />
-              <label :for="'testimoni-' + testimoni.id">{{ testimoni.name_customer }}</label>
+            <!-- Pilih Testimoni -->
+            <h3 class="text-2xl font-bold mb-4 mt-6">Pilih Testimoni</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div v-for="testimoni in testimonis" :key="testimoni.id" class="p-4 border rounded flex items-center">
+                <input
+                  type="checkbox"
+                  :value="testimoni.id"
+                  v-model="selectedTestimonisIds"
+                  :id="'testimoni-' + testimoni.id"
+                  class="mr-2"
+                />
+                <label :for="'testimoni-' + testimoni.id">
+                  {{ testimoni.name_customer }}
+                </label>
+              </div>
             </div>
-          </div>
 
-          <!-- Tombol Simpan -->
-          <button
-            type="button"
-            @click="saveSettings"
-            class="text-white bg-gradient-to-b from-pink-100 via-pink-400 to-pink-500 hover:bg-gradient-to-r focus:ring-4 focus:outline-none focus:ring-pink-300 dark:focus:ring-pink-800 shadow-lg shadow-pink-500/50 dark:shadow-lg dark:shadow-pink-800/80 font-medium rounded-lg text-sm px-6 py-3.5 text-center me-2 mb-2 mt-12"
-          >
-            Simpan Tampilan
-          </button>
+            <!-- Tombol Simpan -->
+            <button type="submit" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+              Simpan Pengaturan
+            </button>
+          </form>
         </div>
       </div>
     </div>
@@ -48,47 +49,37 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import { Inertia } from '@inertiajs/inertia';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
-// Mendapatkan data buku dan testimoni dari props yang diterima
-const { books, currentBook, testimonis, selectedTestimonisIds: initialSelectedTestimonisIds } = usePage().props;
+// Ambil data dari props yang dikirimkan oleh controller
+const { books, currentBook, testimonis, selectedTestimonisIds: initialSelectedTestimonisIds, csrfToken } = usePage().props;
 
-// Menyimpan ID buku yang dipilih, dan buat currentBook reaktif
+// Inisialisasi data
 const selectedBookId = ref(currentBook?.id || null);
+const selectedTestimonisIds = ref(Array.isArray(initialSelectedTestimonisIds) ? initialSelectedTestimonisIds : []);
 
-// Menyimpan ID testimoni yang dipilih
-const selectedTestimonisIds = ref(initialSelectedTestimonisIds || []);
-
-// Fungsi untuk mengupdate buku yang dipilih
-const updateBook = () => {
-  const selectedBook = books.find(book => book.id === selectedBookId.value);
-  if (selectedBook) {
-    currentBook.title = selectedBook.title;
-    currentBook.author = selectedBook.author;
-    currentBook.description = selectedBook.description;
-    currentBook.image_path = selectedBook.image_path;
-  }
-};
-
-// Fungsi untuk menyimpan pengaturan buku dan testimoni yang dipilih
+// Fungsi untuk menyimpan pengaturan
 const saveSettings = () => {
-    // First send the book ID
-    Inertia.post(route('saveSelectedBook'), { book_id: selectedBookId.value });
+  // Validasi jika 1 buku dan 3 testimoni dipilih
+  if (!selectedBookId.value) {
+    alert('Pilih buku terlebih dahulu.');
+    return;
+  }
 
-    // Then send the testimonial IDs (if any)
-    if (selectedTestimonisIds.value.length > 0) {
-        Inertia.post(route('saveSelectedTestimonis'), { testimoni_ids: selectedTestimonisIds.value });
-    }
+  if (selectedTestimonisIds.value.length !== 3) {
+    alert('Pilih tepat 3 testimoni.');
+    return;
+  }
+
+  // Kirim data ke backend menggunakan Inertia
+  Inertia.post(route('saveSettings'), {
+    book_id: selectedBookId.value,
+    testimoni_ids: selectedTestimonisIds.value, // Kirim array ID testimoni yang dipilih
+    _token: csrfToken, // Sertakan CSRF token jika diperlukan
+  });
 };
-
-
-// Watcher untuk memastikan ID buku dan testimoni tersimpan
-watch(selectedTestimonisIds, (newIds) => {
-  console.log("Selected Testimonis IDs:", newIds);
-});
 </script>
-

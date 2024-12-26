@@ -21,9 +21,9 @@ class Setting extends Model
         return $this->belongsTo(Book::class, 'selected_book_id');
     }
 
-    // Relasi ke Testimoni
     public function selectedTestimonis()
     {
-        return $this->hasManyThrough(Testimoni::class, User::class, 'user_id', 'id', 'user_id', 'selected_testimoni_ids');
+        return Testimoni::whereIn('id', json_decode($this->selected_testimoni_ids, true))->get();
     }
+
 }

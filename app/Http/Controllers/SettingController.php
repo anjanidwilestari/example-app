@@ -43,33 +43,25 @@ class SettingController extends Controller
     // Halaman dashboard untuk admin
     public function dashboard()
     {
-        // Mendapatkan user yang sedang login
+        // Ambil pengaturan yang tersimpan untuk user ini
         $user = auth()->user();
-
-        // Ambil data setting terkait user
-        $setting = $user->setting;
-
-        // Ambil ID buku yang telah dipilih
-        $selectedBookId = $setting ? $setting->selected_book_id : null;
-
-        // Ambil ID Testimoni yang telah dipilih
-        $selectedTestimonisId = $setting ? $setting->selected_testimonis_ids : null;
-
-        // Jika ada buku yang dipilih, ambil datanya
-        $currentBook = $selectedBookId ? Book::find($selectedBookId) : Book::first();
-
-        // Jika ada buku yang dipilih, ambil datanya
-        $currentTestimoni = $selectedTestimonisId ? Testimoni::find($selectedTestimonisId) : Testimoni::first();
-
+        $setting = Setting::where('user_id', $user->id)->first();
+    
+        // Ambil data buku dan testimoni berdasarkan ID yang tersimpan
+        $currentBook = null;
+        $selectedTestimonis = [];
+    
+        if ($setting) {
+            $currentBook = Book::find($setting->selected_book_id);
+            $selectedTestimonis = Testimoni::whereIn('id', json_decode($setting->selected_testimoni_ids))->get();
+        }
+    
+        // Kirim data ke tampilan
         return Inertia::render('Dashboard', [
-            'books' => Book::all(),  // Ambil semua buku dari tabel books
-            'currentBook' => $currentBook, // Buku yang dipilih
-            
-            'testimonis'=>Testimoni::all(),
-            'currentTestimoni'=> $currentTestimoni,
+            'currentBook' => $currentBook,
+            'selectedTestimonis' => $selectedTestimonis,
         ]);
     }
-
 
     public function dashboardedit(Request $request)
     {
@@ -83,8 +75,8 @@ class SettingController extends Controller
         $selectedBookId = $setting ? $setting->selected_book_id : null;
         
         // Ambil ID testimoni yang telah dipilih
-        $selectedTestimonisIds = $setting ? $setting->selected_testimoni_ids : [];
-        
+        $selectedTestimonisIds = $setting ? json_decode($setting->selected_testimoni_ids, true) : [];
+
         // Ambil semua buku untuk dropdown
         $books = Book::all();
         
@@ -99,59 +91,52 @@ class SettingController extends Controller
             'currentBook' => $currentBook, // Menampilkan buku yang dipilih
             'testimonis' => $testimonis, // Semua testimoni
             'selectedTestimonisIds' => $selectedTestimonisIds, // ID testimoni yang dipilih
+            'csrfToken' => csrf_token(),
         ]);
     }
 
 
-    // Menyimpan pilihan buku yang dipilih
-    public function saveSelectedBook(Request $request)
+    // Menyimpan pilihan buku dan testimoni yang dipilih
+    public function saveSettings(Request $request)
     {
-        // Validasi input untuk memastikan ada book_id
-        $request->validate([
-            'book_id' => 'required|exists:books,id',
+        // Validasi data yang diterima
+        $validatedData = $request->validate([
+            'book_id' => 'required|exists:books,id', // Pastikan ID buku valid
+            'testimoni_ids' => 'required|array|size:3', // Pastikan ada tepat 3 testimoni
+            'testimoni_ids.*' => 'exists:testimonis,id', // Validasi masing-masing ID testimoni
         ]);
 
-        // Mendapatkan user yang sedang login
+        // Ambil user saat ini
         $user = auth()->user();
 
-        // Cari atau buat entri setting untuk user ini
-        $setting = $user->setting ?? new Setting(); // Jika tidak ada, buat instance baru
+        // Periksa apakah sudah ada pengaturan untuk user ini
+        $setting = Setting::where('user_id', $user->id)->first();
 
-        // Simpan ID buku yang dipilih dalam setting (baik untuk update maupun create)
-        $setting->user_id = $user->id; // Pastikan user_id tersetting
-        $setting->selected_book_id = $request->input('book_id'); // Set ID buku yang dipilih
+        // Jika sudah ada, update pengaturan
+        if ($setting) {
+            $setting->selected_book_id = $validatedData['book_id'];
+            $setting->selected_testimoni_ids = json_encode($validatedData['testimoni_ids']);
+        } else {
+            // Jika belum ada, buat pengaturan baru
+            $setting = new Setting();
+            $setting->user_id = $user->id;
+            $setting->selected_book_id = $validatedData['book_id'];
+            $setting->selected_testimoni_ids = json_encode($validatedData['testimoni_ids']);
+        }
 
-        // Simpan entri setting ke database
-        $setting->save();
+        // Simpan pengaturan
+        try {
+            $setting->save();
+        } catch (\Exception $e) {
+            // Tangani kesalahan jika ada
+            Log::error("Gagal menyimpan pengaturan: " . $e->getMessage());
+            return redirect()->route('dashboard.edit')->with('error', 'Gagal menyimpan pengaturan.');
+        }
 
-        // Arahkan kembali ke halaman dashboard
-        return redirect()->route('dashboard');
+        // Redirect kembali dengan pesan sukses
+        return redirect()->route('dashboard.edit')->with('success', 'Pengaturan berhasil disimpan!');
     }
 
-    public function saveSelectedTestimonis(Request $request)
-    {
-        // Validasi input untuk memastikan array testimoni
-        $request->validate([
-            'testimoni_ids' => 'required|array|min:1',
-            'testimoni_ids.*' => 'exists:testimonis,id', // Pastikan ID testimoni valid
-        ]);
-
-        // Mendapatkan user yang sedang login
-        $user = auth()->user();
-
-        // Cari atau buat entri setting untuk user ini
-        $setting = $user->setting ?? new Setting(); // Jika tidak ada, buat instance baru
-
-        $setting->user_id = $user->id; // Pastikan user_id tersetting
-        // Pastikan selected_testimoni_ids disimpan dalam format array atau JSON
-        $setting->selected_testimoni_ids = json_encode($request->input('testimoni_ids'));
-
-        // Simpan entri setting ke database
-        $setting->save();
-
-        // Arahkan kembali ke halaman dashboard
-        return redirect()->route('dashboard');
-    }
 
 
 

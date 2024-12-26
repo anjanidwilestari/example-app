@@ -46,8 +46,7 @@ Route::middleware('auth')->group(function () {
     // Dashboard Admin
     Route::get('/dashboard', [SettingController::class, 'dashboard'])->name('dashboard');
     Route::get('/dashboard-edit', [SettingController::class, 'dashboardedit'])->name('dashboard.edit');
-    Route::post('/save-selected-book', [SettingController::class, 'saveSelectedBook'])->name('saveSelectedBook');
-    Route::post('/save-selected-testimoni', [SettingController::class, 'saveSelectedTestimonis'])->name('saveSelectedTestimonis');
+    Route::post('/save-settings', [SettingController::class, 'saveSettings'])->name('saveSettings');
 
     
     //Buku

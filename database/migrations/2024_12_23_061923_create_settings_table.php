@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');  // Relasi ke tabel users
             $table->foreignId('selected_book_id')->nullable()->constrained('books')->onDelete('set null'); // Relasi ke books
-            $table->json('selected_testimoni_ids')->nullable()->constrained('testimonis')->onDelete('set null'); // Menyimpan 3 ID testimoni terpilih
+            $table->json('selected_testimoni_ids')->nullable(); // Menyimpan 3 ID testimoni terpilih
             $table->timestamps();
         });
     }
