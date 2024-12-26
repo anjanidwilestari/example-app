@@ -4,26 +4,21 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateSubFootersTable extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up()
     {
         Schema::create('sub_footers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('footer_id')->constrained()->onDelete('cascade');
-            $table->string('name'); // Nama Sub-footer
+            $table->foreignId('footer_id')->constrained('footers')->onDelete('cascade'); // Foreign key ke tabel footers
+            $table->string('name'); // Nama subfooter
+            $table->string('link'); // Link untuk subfooter
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('sub_footers');
     }
-};
+}

@@ -69,12 +69,10 @@ Route::middleware('auth')->group(function () {
 
 
     //Footer
-    Route::get('/footers', [FooterController::class, 'index'])->name('footers.index');
-    Route::get('/footers-create', [FooterController::class, 'index'])->name('footers.create');
-    Route::get('/footers', [FooterController::class, 'index'])->name('footers.index');
     Route::resource('footers', FooterController::class);
-    Route::resource('sub-footers', SubFooterController::class);
-    Route::resource('isi-sub-footers', IsiSubFooterController::class);
+    Route::post('footers/{footer}/sub-footers', [FooterController::class, 'storeSubFooter'])->name('footers.storeSubFooter');
+    Route::put('sub-footers/{subFooter}', [FooterController::class, 'updateSubFooter'])->name('subFooters.update');
+    Route::delete('sub-footers/{subFooter}', [FooterController::class, 'destroySubFooter'])->name('subFooters.destroy');
 
 });
 
