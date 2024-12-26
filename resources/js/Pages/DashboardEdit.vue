@@ -1,8 +1,8 @@
 <template>
-  <Head title="Edit Tampilan Dashboard"></Head>
-  <AuthenticatedLayout>
+   <Head title="Edit Dashboard"></Head>
+    <AuthenticatedLayout>
     <template #header>
-      <h2 class="font-semibold text-xl text-gray-800 leading-tight">Edit Tampilan</h2>
+      <h2 class="font-semibold text-xl text-gray-800 leading-tight">Edit Tampilan Dashboard</h2>
     </template>
 
     <div class="py-12">
@@ -45,14 +45,15 @@
         </div>
       </div>
     </div>
-  </AuthenticatedLayout>
+    </AuthenticatedLayout>
+  
 </template>
 
 <script setup>
+import { Head } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import { Inertia } from '@inertiajs/inertia';
-import { Head } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
 // Ambil data dari props yang dikirimkan oleh controller

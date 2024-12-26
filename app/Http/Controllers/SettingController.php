@@ -14,31 +14,30 @@ use Illuminate\Support\Facades\Log;
 class SettingController extends Controller
 {
     // Halaman welcome untuk user
+    // Halaman welcome untuk user (tidak memerlukan login) 
+    // Halaman welcome untuk publik
     public function welcome()
     {
-        // Ambil setting global, bisa dengan nilai default
-        $setting = Setting::first(); // Ambil setting pertama atau null jika tidak ada
-
-        // Ambil ID buku yang telah dipilih
-        $selectedBookId = $setting ? $setting->selected_book_id : null;
-
-        // Ambil ID Testimoni yang telah dipilih
-        $selectedTestimonisId = $setting ? $setting->selected_testimonis_ids : null;
-
-        // Jika ada buku yang dipilih, ambil datanya
-        $currentBook = $selectedBookId ? Book::find($selectedBookId) : Book::first();
-
-        // Jika ada buku yang dipilih, ambil datanya
-        $currentTestimoni = $selectedTestimonisId ? Testimoni::find($selectedTestimonisId) : Testimoni::first();
-
+        // Ambil pengaturan global (ambil record pertama dari tabel settings)
+        $setting = Setting::first();
+    
+        // Ambil data buku dan testimoni berdasarkan pengaturan yang disimpan
+        $currentBook = null;
+        $selectedTestimonis = [];
+    
+        if ($setting) {
+            $currentBook = Book::find($setting->selected_book_id);
+            $selectedTestimonis = Testimoni::whereIn('id', json_decode($setting->selected_testimoni_ids))->get();
+        }
+    
+        // Kirim data ke tampilan
         return Inertia::render('WelcomeUser', [
-            'books' => Book::all(),  // Ambil semua buku dari tabel books
-            'currentBook' => $currentBook, // Buku yang dipilih
-            
-            'testimonis'=>Testimoni::all(),
-            'currentTestimoni'=> $currentTestimoni,
+            'currentBook' => $currentBook,
+            'currentTestimonis' => $selectedTestimonis, // Pastikan data testimonis dikirim
         ]);
     }
+    
+
 
     // Halaman dashboard untuk admin
     public function dashboard()
