@@ -1,11 +1,3 @@
-<script setup>
-import { Head } from '@inertiajs/vue3';
-import { usePage } from '@inertiajs/vue3';
-
-// Mendapatkan data dari props yang dikirim oleh fungsi welcome() di backend
-const { currentBook, currentTestimonis } = usePage().props;
-</script>
-
 <template>
     <Head title="Highlight"></Head>
 
@@ -101,4 +93,35 @@ const { currentBook, currentTestimonis } = usePage().props;
             </div>
         </div>
     </div>
+
+    <!-- Footer Section -->
+    <footer class="bg-gray-800 text-white py-8 mt-16">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Looping Footer Sections -->
+                <div v-for="footer in footers" :key="footer.id">
+                    <h4 class="text-xl font-semibold mb-4">{{ footer.name }}</h4>
+                    <ul>
+                        <li v-for="subFooter in footer.sub_footers" :key="subFooter.id">
+                            <a
+                                :href="subFooter.link.startsWith('http') ? subFooter.link : 'http://' + subFooter.link"
+                                target="_blank"
+                                class="text-gray-400 hover:text-white"
+                            >
+                                {{ subFooter.name }}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
 </template>
+
+<script setup>
+import { Head } from '@inertiajs/vue3';
+import { usePage } from '@inertiajs/vue3';
+
+// Mendapatkan data dari props yang dikirim oleh fungsi welcome() di backend
+const { currentBook, currentTestimonis, footers } = usePage().props;
+</script>

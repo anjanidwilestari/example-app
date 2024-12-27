@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Book;
+use App\Models\Footer;
 use App\Models\Setting;
 use App\Models\Testimoni;
 use Inertia\Inertia;
@@ -24,7 +25,10 @@ class SettingController extends Controller
         // Ambil data buku dan testimoni berdasarkan pengaturan yang disimpan
         $currentBook = null;
         $selectedTestimonis = [];
-    
+
+        // Mengambil data footer beserta sub-footers
+        $footers = Footer::with('subFooters')->get();
+
         if ($setting) {
             $currentBook = Book::find($setting->selected_book_id);
             $selectedTestimonis = Testimoni::whereIn('id', json_decode($setting->selected_testimoni_ids))->get();
@@ -34,6 +38,7 @@ class SettingController extends Controller
         return Inertia::render('WelcomeUser', [
             'currentBook' => $currentBook,
             'currentTestimonis' => $selectedTestimonis, // Pastikan data testimonis dikirim
+            'footers' => $footers, 
         ]);
     }
     
@@ -45,22 +50,27 @@ class SettingController extends Controller
         // Ambil pengaturan yang tersimpan untuk user ini
         $user = auth()->user();
         $setting = Setting::where('user_id', $user->id)->first();
-    
+        
         // Ambil data buku dan testimoni berdasarkan ID yang tersimpan
         $currentBook = null;
         $selectedTestimonis = [];
-    
+        
+        // Mengambil data footer beserta sub-footers
+        $footers = Footer::with('subFooters')->get();
+
         if ($setting) {
             $currentBook = Book::find($setting->selected_book_id);
             $selectedTestimonis = Testimoni::whereIn('id', json_decode($setting->selected_testimoni_ids))->get();
         }
-    
+
         // Kirim data ke tampilan
         return Inertia::render('Dashboard', [
             'currentBook' => $currentBook,
             'selectedTestimonis' => $selectedTestimonis,
+            'footers' => $footers,  // Kirim data footers dan sub-footers ke tampilan
         ]);
     }
+
 
     public function dashboardedit(Request $request)
     {
