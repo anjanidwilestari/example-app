@@ -107,7 +107,7 @@
                 </h1>
                 <div class="flex flex-col items-center space-y-2">
                     <div
-                        v-for="(distributor, index) in item.distributor"
+                        v-for="(distributor, index) in item.distributors"
                         :key="index"
                         class="flex items-center space-x-2 p-2 w-full"
                     >

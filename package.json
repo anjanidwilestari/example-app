@@ -8,6 +8,8 @@
     "devDependencies": {
         "@inertiajs/vue3": "^1.0.0",
         "@tailwindcss/forms": "^0.5.3",
+        "@types/d3": "^7.4.3",
+        "@types/topojson-client": "^3.1.5",
         "@vitejs/plugin-vue": "^4.6.2",
         "autoprefixer": "^10.4.20",
         "axios": "^1.7.9",
