@@ -96,32 +96,31 @@
       <svg ref="mapRef" width="50%" height="300px" class="md:-pt-15"></svg>
   
       <!-- Distributor Information -->
-      <div class="flex flex-row flex-wrap justify-center">
-  <div
-    v-for="(item, index) in groupedTravel"
-    :key="index"
-    class="flex flex-col items-center m-4 p-4"
-  >
-    <h1 class="text-2xl lg:text-2xl font-bold text-blue-800 dark:text-white mb-4">
-      {{ item.island }}
-    </h1>
-    <div class="flex flex-col items-center space-y-2">
-      <div
-        v-for="(distributor, index) in item.distributor"
-        :key="index"
-        class="flex items-center space-x-2 p-2 w-full"
-      >
-        <div
-          class="w-5 h-5"
-          :style="{ backgroundColor: distributor.color }"
-        ></div>
-        <p class="ml-2 text-center">{{ distributor.industry }}</p>
-      </div>
+        <div class="flex flex-row flex-wrap justify-center">
+            <div
+                v-for="(item, index) in groupedTravel"
+                :key="index"
+                class="flex flex-col items-center m-4 p-4"
+            >
+                <h1 class="text-2xl lg:text-2xl font-bold text-blue-800 dark:text-white mb-4">
+                {{ item.island }}
+                </h1>
+                <div class="flex flex-col items-center space-y-2">
+                    <div
+                        v-for="(distributor, index) in item.distributor"
+                        :key="index"
+                        class="flex items-center space-x-2 p-2 w-full"
+                    >
+                        <div
+                        class="w-5 h-5"
+                        :style="{ backgroundColor: distributor.color }"
+                        ></div>
+                            <p class="ml-2 text-center">{{ distributor.name }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-  </div>
-  
-      </div>
   
     <!-- Footer Section -->
     <footer class="bg-gray-800 text-white py-8 mt-16">
@@ -169,14 +168,14 @@
     const islandIndex = acc.findIndex((item) => item.island === curr.island);
     if (islandIndex >= 0) {
       acc[islandIndex].distributors.push({
-        industry: curr.industry,
+        name: curr.name,
         color: curr.color,
       });
     } else {
       acc.push({
         island: curr.island,
         distributors: [{
-          industry: curr.industry,
+          name: curr.name,
           color: curr.color,
         }],
       });
