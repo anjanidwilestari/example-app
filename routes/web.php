@@ -5,6 +5,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\DistributorController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\FooterController;
 use App\Http\Controllers\SubFooterController;
@@ -74,6 +75,8 @@ Route::middleware('auth')->group(function () {
     Route::put('sub-footers/{subFooter}', [FooterController::class, 'updateSubFooter'])->name('subFooters.update');
     Route::delete('sub-footers/{subFooter}', [FooterController::class, 'destroySubFooter'])->name('subFooters.destroy');
 
+    // Distributor
+    Route::resource('distributors', DistributorController::class);
 });
 
 require __DIR__.'/auth.php';

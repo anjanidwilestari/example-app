@@ -116,6 +116,7 @@
             </div>
         </div>
     </footer>
+    <!-- taruh maps opensource indonesia yang bisa di hover disini (ingat mapsnya cara kerjanya yaitu jika dihover di provinsi yang diarahkan cursornya maka bisa memunculkan list mitra perusahaan kami berdasarkan provinsi), aku mau datanya berasal dari database,-->
 </template>
 
 <script setup>
