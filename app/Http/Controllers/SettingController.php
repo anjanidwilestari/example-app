@@ -7,6 +7,7 @@ use App\Models\Book;
 use App\Models\Footer;
 use App\Models\Setting;
 use App\Models\Testimoni;
+use App\Models\Distributor;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
@@ -26,8 +27,8 @@ class SettingController extends Controller
         $currentBook = null;
         $selectedTestimonis = [];
 
-        // Mengambil data footer beserta sub-footers
-        $footers = Footer::with('subFooters')->get();
+        $footers = Footer::with('subFooters')->get(); // Mengambil data footer beserta sub-footers
+        $distributors = Distributor::all();  // Ambil semua distributor
 
         if ($setting) {
             $currentBook = Book::find($setting->selected_book_id);
@@ -39,6 +40,7 @@ class SettingController extends Controller
             'currentBook' => $currentBook,
             'currentTestimonis' => $selectedTestimonis, // Pastikan data testimonis dikirim
             'footers' => $footers, 
+            'distributors' => $distributors,
         ]);
     }
     

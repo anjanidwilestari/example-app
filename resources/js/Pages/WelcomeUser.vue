@@ -1,19 +1,8 @@
 <template>
     <Head title="Highlight"></Head>
-
+  
     <div class="relative sm:flex sm:justify-center sm:items-center min-h-screen bg-dots-darker bg-center bg-gray-100 dark:bg-dots-lighter dark:bg-gray-900 selection:bg-red-500 selection:text-white">
         <div class="max-w-7xl mx-auto p-6 lg:p-8">
-            <div class="flex justify-center">
-                <svg
-                    viewBox="0 0 62 65"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-16 w-auto bg-gray-100 dark:bg-gray-900"
-                >
-                    <!-- Tambahkan SVG path di sini -->
-                </svg>
-            </div>
-
             <div class="mt-16">
                 <div class="grid grid-cols-1 md:grid-cols-1 gap-6 lg:gap-8">
                     <!-- Section Buku Terpilih -->
@@ -34,7 +23,7 @@
                                                     Lets dive in!
                                                 </button>
                                             </div>
-
+  
                                             <div class="order-1 md:order-2 md:col-span-2 flex justify-center items-center">
                                                 <div class="imagecontainer md:relative md:w-full lg:xl:w-1/2">
                                                     <div class="background-rectangle absolute top-0 left-0 w-full h-full"></div>
@@ -57,7 +46,7 @@
                             </div>
                         </div>
                     </div>
-
+  
                     <!-- Section Testimoni -->
                     <div v-if="Array.isArray(currentTestimonis) && currentTestimonis.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 lg:gap-8">
                         <div
@@ -85,7 +74,7 @@
                             </div>
                         </div>
                     </div>
-
+  
                     <div v-else class="text-center mt-6">
                         <p class="text-gray-500">Belum ada testimoni untuk ditampilkan.</p>
                     </div>
@@ -93,7 +82,47 @@
             </div>
         </div>
     </div>
-
+  
+    <!-- Maps -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 flex flex-col items-center">
+      <!-- Title and Learn more link -->
+      <div class="flex items-center justify-center">
+        <h1 class="text-2xl lg:text-5xl font-bold text-blue-800 dark:text-white">
+          Map Our Distributor
+        </h1>
+      </div>
+  
+      <!-- SVG Map -->
+      <svg ref="mapRef" width="50%" height="300px" class="md:-pt-15"></svg>
+  
+      <!-- Distributor Information -->
+      <div class="flex flex-row flex-wrap justify-center">
+  <div
+    v-for="(item, index) in groupedTravel"
+    :key="index"
+    class="flex flex-col items-center m-4 p-4"
+  >
+    <h1 class="text-2xl lg:text-2xl font-bold text-blue-800 dark:text-white mb-4">
+      {{ item.island }}
+    </h1>
+    <div class="flex flex-col items-center space-y-2">
+      <div
+        v-for="(distributor, index) in item.distributor"
+        :key="index"
+        class="flex items-center space-x-2 p-2 w-full"
+      >
+        <div
+          class="w-5 h-5"
+          :style="{ backgroundColor: distributor.color }"
+        ></div>
+        <p class="ml-2 text-center">{{ distributor.industry }}</p>
+      </div>
+    </div>
+  </div>
+  </div>
+  
+      </div>
+  
     <!-- Footer Section -->
     <footer class="bg-gray-800 text-white py-8 mt-16">
         <div class="container mx-auto px-4">
@@ -116,13 +145,148 @@
             </div>
         </div>
     </footer>
-    <!-- taruh maps opensource indonesia yang bisa di hover disini (ingat mapsnya cara kerjanya yaitu jika dihover di provinsi yang diarahkan cursornya maka bisa memunculkan list mitra perusahaan kami berdasarkan provinsi), aku mau datanya berasal dari database,-->
-</template>
-
-<script setup>
-import { Head } from '@inertiajs/vue3';
-import { usePage } from '@inertiajs/vue3';
-
-// Mendapatkan data dari props yang dikirim oleh fungsi welcome() di backend
-const { currentBook, currentTestimonis, footers } = usePage().props;
-</script>
+  
+  </template>
+  
+  <script setup>
+  import { Head } from '@inertiajs/vue3';
+  import { ref, onMounted } from 'vue';
+  import { usePage } from '@inertiajs/vue3';
+  import { select, geoPath, geoMercator, easeLinear, selectAll } from 'd3';
+  import * as topojson from 'topojson-client';
+  import { province } from '@/data/province.js';
+  
+  // Mendapatkan data dari props yang dikirim oleh fungsi welcome() di backend
+  const { currentBook, currentTestimonis, footers, distributors } = usePage().props;
+  
+  // Reactive references untuk peta dan distributor
+  const mapRef = ref(null);
+  const groupedTravel = ref([]);
+  
+  // Fungsi untuk mengelompokkan data distributor
+  const groupTravelData = (distributors) => {
+  const grouped = distributors.reduce((acc, curr) => {
+    const islandIndex = acc.findIndex((item) => item.island === curr.island);
+    if (islandIndex >= 0) {
+      acc[islandIndex].distributors.push({
+        industry: curr.industry,
+        color: curr.color,
+      });
+    } else {
+      acc.push({
+        island: curr.island,
+        distributors: [{
+          industry: curr.industry,
+          color: curr.color,
+        }],
+      });
+    }
+    return acc;
+  }, []);
+  return grouped;
+  };
+  
+  
+  // Mengelompokkan travel data pada saat komponen dimount
+  onMounted(() => {
+  groupedTravel.value = groupTravelData(distributors); // Pastikan data distributor dikelompokkan
+  
+  let width = window.innerWidth;
+  let height = window.innerHeight;
+  
+  const svg = select(mapRef.value)
+    .attr('width', width)
+    .attr('height', height * 0.8)
+    .attr('class', 'map');
+  
+  const projection = geoMercator()
+    .center([118.25, -5]) // Posisi untuk Indonesia
+    .scale(width * 1.2)
+    .translate([width / 2, height / 2]);
+  
+  const path = geoPath().projection(projection);
+  
+  function ready(data) {
+    const g = svg.append('g');
+    const features = topojson.feature(data, data.objects.states_provinces).features;
+  
+    g.selectAll('path')
+      .data(features)
+      .enter()
+      .append('path')
+      .attr('d', path)
+      .attr('stroke', 'black')
+      .attr('strokeWidth', '0.2')
+      .attr('fill', 'white')
+      .transition()
+      .duration(2000)
+      .delay((d, i) => i * 5)
+      .ease(easeLinear)
+      .attr('fill', (d) => {
+        const provinceData = d.properties;
+        const matchingDistributor = groupedTravel.value.find(
+          (group) => group.island === provinceData.name
+        );
+  
+        if (matchingDistributor) {
+          return matchingDistributor.distributors[0].color; // Menggunakan warna pertama jika ada distributor
+        } else {
+          return 'lightgray'; // Warna default jika tidak ada distributor
+        }
+      });
+  
+    g.selectAll('path')
+      .append('title')
+      .text((d) => d.properties?.name || '');
+  
+    addLegend();
+  }
+  
+  function addLegend() {
+    const legend = svg.append('g').attr('class', 'legend');
+    const legendItemHeight = 20;
+    const legendSpacing = 5;
+  
+    groupedTravel.value.forEach((item, index) => {
+      const legendItem = legend
+        .append('g')
+        .attr(
+          'transform',
+          `translate(0, ${height * 0.8 + index * (legendItemHeight + legendSpacing) + legendSpacing})`
+        );
+  
+      legendItem
+        .append('rect')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('width', legendItemHeight)
+        .attr('height', legendItemHeight)
+        .style('fill', item.distributors[0].color);
+  
+      legendItem
+        .append('text')
+        .attr('x', legendItemHeight + legendSpacing)
+        .attr('y', legendItemHeight - legendSpacing)
+        .text(item.island);
+    });
+  }
+  
+  function resize() {
+    width = window.innerWidth;
+    height = window.innerHeight;
+  
+    projection.scale(width * 1.2).translate([width / 2, height / 2]);
+  
+    select('svg')
+      .attr('width', width)
+      .attr('height', height * 0.8);
+  
+    selectAll('path').attr('d', path);
+  }
+  
+  ready(province);
+  window.addEventListener('resize', resize);
+  });
+  
+  </script>
+  
