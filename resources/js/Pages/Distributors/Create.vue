@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
@@ -7,31 +7,32 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
+import { province } from '@/data/province.js'; // Pastikan path sesuai
 
 // Inisialisasi form
-const form = ref({
+const form = useForm({
   name: '',
   province: '',
   island: '',
-  color: '#ccc', // Default color
-  errors: {},
-  processing: false,
-  recentlySuccessful: false,
+  color: '', // Warna akan diatur otomatis
 });
 
-// Submit form
-const submitForm = async () => {
-  form.value.processing = true;
-  try {
-    await axios.post('/distributors', form.value);  // Adjust the route as necessary
-    alert('Distributor berhasil disimpan!');
-    form.value = { name: '', province: '', island: '', color: '#ccc', errors: {}, processing: false, recentlySuccessful: true };
-  } catch (error) {
-    console.error('Gagal menyimpan distributor:', error);
-    alert('Terjadi kesalahan, silakan coba lagi.');
-    form.value.processing = false;
+// Proses data provinsi dari `province.js`
+const provinces = ref(
+  province.objects.states_provinces.geometries.map((item) => ({
+    name: item.properties.name,
+    color: item.properties.color,
+  }))
+);
+
+// Perbarui warna berdasarkan provinsi
+watch(
+  () => form.province,
+  (newProvince) => {
+    const selectedProvince = provinces.value.find((p) => p.name === newProvince);
+    form.color = selectedProvince ? selectedProvince.color : '#CCC'; // Default jika tidak ada
   }
-};
+);
 </script>
 
 <template>
@@ -46,7 +47,7 @@ const submitForm = async () => {
       <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
           <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-            <form @submit.prevent="submitForm" class="space-y-6">
+            <form @submit.prevent="form.post(route('distributors.store'))" class="space-y-6">
               <!-- Name -->
               <div>
                 <InputLabel for="name" value="Name" />
@@ -62,12 +63,16 @@ const submitForm = async () => {
               <!-- Province -->
               <div>
                 <InputLabel for="province" value="Province" />
-                <TextInput
+                <select
                   id="province"
                   v-model="form.province"
-                  type="text"
                   class="form-input mt-1 block w-full"
-                />
+                >
+                  <option value="" disabled>Pilih Provinsi</option>
+                  <option v-for="province in provinces" :key="province.name" :value="province.name">
+                    {{ province.name }}
+                  </option>
+                </select>
                 <InputError :message="form.errors.province" class="mt-2" />
               </div>
 
@@ -91,6 +96,7 @@ const submitForm = async () => {
                   v-model="form.color"
                   type="color"
                   class="mt-1 block w-full border-gray-300 rounded-md"
+                  readonly
                 />
                 <InputError :message="form.errors.color" class="mt-2" />
               </div>
@@ -115,3 +121,5 @@ const submitForm = async () => {
     </AuthenticatedLayout>
   </section>
 </template>
+
+

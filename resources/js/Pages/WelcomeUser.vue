@@ -96,30 +96,44 @@
       <svg ref="mapRef" width="50%" height="300px" class="md:-pt-15"></svg>
   
       <!-- Distributor Information -->
-        <div class="flex flex-row flex-wrap justify-center">
+      <div class="flex flex-row flex-wrap justify-center">
+        <div
+          v-for="(island, index) in groupedTravel"
+          :key="index"
+          class="flex flex-col items-center m-4 p-4"
+        >
+          <h1 class="text-2xl lg:text-2xl font-bold text-blue-800 dark:text-white mb-4">
+            {{ island.island }}
+          </h1>
+
+          <div class="flex flex-col items-center space-y-4">
             <div
-                v-for="(item, index) in groupedTravel"
-                :key="index"
-                class="flex flex-col items-center m-4 p-4"
+              v-for="(province, pIndex) in island.provinces"
+              :key="pIndex"
+              class="w-full"
             >
-                <h1 class="text-2xl lg:text-2xl font-bold text-blue-800 dark:text-white mb-4">
-                {{ item.island }}
-                </h1>
-                <div class="flex flex-col items-center space-y-2">
-                    <div
-                        v-for="(distributor, index) in item.distributors"
-                        :key="index"
-                        class="flex items-center space-x-2 p-2 w-full"
-                    >
-                        <div
-                        class="w-5 h-5"
-                        :style="{ backgroundColor: distributor.color }"
-                        ></div>
-                            <p class="ml-2 text-center">{{ distributor.name }}</p>
-                    </div>
+              <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-300">
+                {{ province.name }}
+              </h2>
+
+              <div class="flex flex-col items-start space-y-2">
+                <div
+                  v-for="(distributor, dIndex) in province.distributors"
+                  :key="dIndex"
+                  class="flex items-center space-x-2 p-2"
+                >
+                  <div
+                    class="w-5 h-5"
+                    :style="{ backgroundColor: distributor.color }"
+                  ></div>
+                  <p>{{ distributor.name }}</p>
                 </div>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
+
     </div>
   
     <!-- Footer Section -->
@@ -164,32 +178,43 @@
   
   // Fungsi untuk mengelompokkan data distributor
   const groupTravelData = (distributors) => {
-  const grouped = distributors.reduce((acc, curr) => {
-    const islandIndex = acc.findIndex((item) => item.island === curr.island);
-    if (islandIndex >= 0) {
-      acc[islandIndex].distributors.push({
+    const grouped = distributors.reduce((acc, curr) => {
+      // Cari apakah pulau sudah ada
+      let islandGroup = acc.find((item) => item.island === curr.island);
+      if (!islandGroup) {
+        // Jika belum ada, tambahkan grup baru untuk pulau
+        islandGroup = { island: curr.island, provinces: [] };
+        acc.push(islandGroup);
+      }
+
+      // Cari apakah provinsi sudah ada di dalam pulau tersebut
+      let provinceGroup = islandGroup.provinces.find(
+        (item) => item.name === curr.province
+      );
+      if (!provinceGroup) {
+        // Jika belum ada, tambahkan grup baru untuk provinsi
+        provinceGroup = { name: curr.province, distributors: [] };
+        islandGroup.provinces.push(provinceGroup);
+      }
+
+      // Tambahkan distributor ke dalam grup provinsi
+      provinceGroup.distributors.push({
         name: curr.name,
         color: curr.color,
       });
-    } else {
-      acc.push({
-        island: curr.island,
-        distributors: [{
-          name: curr.name,
-          color: curr.color,
-        }],
-      });
-    }
-    return acc;
-  }, []);
-  return grouped;
+
+      return acc;
+    }, []);
+
+    return grouped;
   };
+
   
   
   // Mengelompokkan travel data pada saat komponen dimount
   onMounted(() => {
   groupedTravel.value = groupTravelData(distributors); // Pastikan data distributor dikelompokkan
-  
+  console.log('Grouped Travel Data:', groupedTravel.value); // Debug hasil pengelompokan
   let width = window.innerWidth;
   let height = window.innerHeight;
   
@@ -223,16 +248,22 @@
       .ease(easeLinear)
       .attr('fill', (d) => {
         const provinceData = d.properties;
-        const matchingDistributor = groupedTravel.value.find(
-          (group) => group.island === provinceData.name
-        );
-  
-        if (matchingDistributor) {
-          return matchingDistributor.distributors[0].color; // Menggunakan warna pertama jika ada distributor
-        } else {
-          return 'lightgray'; // Warna default jika tidak ada distributor
+
+        // Cari provinsi langsung berdasarkan nama
+        const matchingProvince = groupedTravel.value
+          .flatMap((group) => group.provinces)
+          .find((province) => province.name === provinceData.name);
+
+        // Validasi data sebelum mengakses distributor pertama
+        if (matchingProvince && matchingProvince.distributors.length > 0) {
+          return matchingProvince.distributors[0].color; // Warna distributor pertama
         }
+
+        return 'lightgray'; // Warna default jika tidak ditemukan
       });
+
+
+
   
     g.selectAll('path')
       .append('title')
