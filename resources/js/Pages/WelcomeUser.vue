@@ -265,9 +265,25 @@
 
 
   
+    // Menambahkan title untuk hover
     g.selectAll('path')
       .append('title')
-      .text((d) => d.properties?.name || '');
+      .text((d) => {
+        const provinceData = d.properties;
+        const matchingProvince = groupedTravel.value
+          .flatMap((group) => group.provinces)
+          .find((province) => province.name === provinceData.name);
+
+        if (matchingProvince && matchingProvince.distributors.length > 0) {
+          // Menggabungkan nama distributor menjadi satu string
+          const distributorNames = matchingProvince.distributors.map(
+            (distributor) => distributor.name
+          ).join('\n');
+          return distributorNames; // Menampilkan daftar distributor
+        }
+
+        return 'Tidak ada distributor'; // Pesan default jika tidak ada distributor
+      });
   
     addLegend();
   }

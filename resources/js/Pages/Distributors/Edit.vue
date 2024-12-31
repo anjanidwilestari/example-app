@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
@@ -7,13 +7,14 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
+import { province } from '@/data/province.js'; // Ensure path is correct
 
-// Mendapatkan data distributor yang diterima dari controller
+// Props for receiving distributor data
 const props = defineProps({
   distributor: Object,
 });
 
-// Inisialisasi form menggunakan data distributor
+// Initialize form using distributor data
 const form = useForm({
   name: props.distributor.name,
   province: props.distributor.province,
@@ -21,14 +22,34 @@ const form = useForm({
   color: props.distributor.color,
 });
 
-// Fungsi untuk submit form
+// Data for provinces
+const provinces = ref(
+  province.objects.states_provinces.geometries.map((item) => ({
+    name: item.properties.name,
+    color: item.properties.color,
+  }))
+);
+
+// Update color based on selected province
+watch(
+  () => form.province,
+  (newProvince) => {
+    const selectedProvince = provinces.value.find((p) => p.name === newProvince);
+    form.color = selectedProvince ? selectedProvince.color : '#CCC'; // Default color if not found
+  }
+);
+
+// Disable color input
+const isColorDisabled = ref(true); // Using ref instead of data()
+
+// Submit form function
 const submitForm = () => {
   form.put(route('distributors.update', props.distributor.id), {
     onSuccess: () => {
-      form.reset(); // Reset form setelah submit berhasil
+      form.reset(); // Reset the form after successful submission
     },
     onError: (errors) => {
-      console.error(errors); // Handling jika terjadi kesalahan
+      console.error(errors); // Handle errors if any
     },
   });
 };
@@ -36,7 +57,7 @@ const submitForm = () => {
 
 <template>
   <section>
-    <Head title="Edit Distributor"></Head>
+    <Head title="Edit Distributor" />
     <AuthenticatedLayout>
       <template #header>
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">Edit Distributor</h2>
@@ -62,12 +83,20 @@ const submitForm = () => {
               <!-- Input Province -->
               <div>
                 <InputLabel for="province" value="Province" />
-                <TextInput
+                <select
                   id="province"
                   v-model="form.province"
-                  type="text"
-                  class="mt-1 block w-full"
-                />
+                  class="form-input mt-1 block w-full"
+                >
+                  <option value="" disabled>Pilih Provinsi</option>
+                  <option
+                    v-for="province in provinces"
+                    :key="province.name"
+                    :value="province.name"
+                  >
+                    {{ province.name }}
+                  </option>
+                </select>
                 <InputError :message="form.errors.province" class="mt-2" />
               </div>
 
@@ -86,11 +115,12 @@ const submitForm = () => {
               <!-- Input Color -->
               <div>
                 <InputLabel for="color" value="Color" />
-                <TextInput
+                <input
                   id="color"
                   v-model="form.color"
-                  type="text"
-                  class="mt-1 block w-full"
+                  type="color"
+                  class="mt-1 block w-full border-gray-300 rounded-md"
+                  :disabled="isColorDisabled"
                 />
                 <InputError :message="form.errors.color" class="mt-2" />
               </div>
@@ -106,3 +136,4 @@ const submitForm = () => {
     </AuthenticatedLayout>
   </section>
 </template>
+
