@@ -68,7 +68,7 @@ class SettingController extends Controller
         }
 
         // Kirim data ke tampilan
-        return Inertia::render('Dashboard', [
+        return Inertia::render('Dashboard/Index', [
             'currentBook' => $currentBook,
             'selectedTestimonis' => $selectedTestimonis,
             'selectedReasons' => $selectedReasons,
@@ -105,7 +105,7 @@ class SettingController extends Controller
         // Ambil semua reason
         $reasons = Reason::all();
         
-        return Inertia::render('DashboardEdit', [
+        return Inertia::render('Dashboard/Edit', [
             'books' => $books,  // Daftar buku
             'currentBook' => $currentBook, // Menampilkan buku yang dipilih
             'testimonis' => $testimonis, // Semua testimoni

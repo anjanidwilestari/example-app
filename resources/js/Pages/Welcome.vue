@@ -1,5 +1,5 @@
 <script setup>
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link } from "@inertiajs/vue3";
 
 defineProps({
     canLogin: {
@@ -89,10 +89,17 @@ defineProps({
                                 </svg>
                             </div>
 
-                            <h2 class="mt-6 text-xl font-semibold text-gray-900 dark:text-white">Highlight</h2>
+                            <h2
+                                class="mt-6 text-xl font-semibold text-gray-900 dark:text-white"
+                            >
+                                Highlight
+                            </h2>
 
-                            <p class="mt-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
-                               Dapatkan info rekomendasi top list buku hari ini!
+                            <p
+                                class="mt-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed"
+                            >
+                                Dapatkan info rekomendasi top list buku hari
+                                ini!
                             </p>
                         </div>
 
@@ -133,9 +140,15 @@ defineProps({
                                 </svg>
                             </div>
 
-                            <h2 class="mt-6 text-xl font-semibold text-gray-900 dark:text-white">Laracasts</h2>
+                            <h2
+                                class="mt-6 text-xl font-semibold text-gray-900 dark:text-white"
+                            >
+                                Laracasts
+                            </h2>
 
-                            <p class="mt-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
+                            <p
+                                class="mt-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed"
+                            >
                                 Halo ini Ayi lagi
                             </p>
                         </div>
@@ -178,9 +191,15 @@ defineProps({
                                 </svg>
                             </div>
 
-                            <h2 class="mt-6 text-xl font-semibold text-gray-900 dark:text-white">Laravel News</h2>
+                            <h2
+                                class="mt-6 text-xl font-semibold text-gray-900 dark:text-white"
+                            >
+                                Laravel News
+                            </h2>
 
-                            <p class="mt-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
+                            <p
+                                class="mt-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed"
+                            >
                                 Mulai bosen ketemu Ayi ya
                             </p>
                         </div>
@@ -222,10 +241,17 @@ defineProps({
                                 </svg>
                             </div>
 
-                            <h2 class="mt-6 text-xl font-semibold text-gray-900 dark:text-white">Vibrant Ecosystem</h2>
+                            <h2
+                                class="mt-6 text-xl font-semibold text-gray-900 dark:text-white"
+                            >
+                                Vibrant Ecosystem
+                            </h2>
 
-                            <p class="mt-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
-                                Laravel's robust library of first-party tools and libraries, such as
+                            <p
+                                class="mt-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed"
+                            >
+                                Laravel's robust library of first-party tools
+                                and libraries, such as
                                 <a
                                     href="https://forge.laravel.com"
                                     class="underline hover:text-gray-700 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
@@ -246,8 +272,9 @@ defineProps({
                                     class="underline hover:text-gray-700 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
                                     >Envoyer</a
                                 >
-                                help you take your projects to the next level. Pair them with powerful open source
-                                libraries like
+                                help you take your projects to the next level.
+                                Pair them with powerful open source libraries
+                                like
                                 <a
                                     href="https://laravel.com/docs/billing"
                                     class="underline hover:text-gray-700 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
@@ -284,10 +311,14 @@ defineProps({
                 </div>
             </div>
 
-            <div class="flex justify-center mt-16 px-6 sm:items-center sm:justify-between">
+            <div
+                class="flex justify-center mt-16 px-6 sm:items-center sm:justify-between"
+            >
                 <div class="text-center text-sm sm:text-start">&nbsp;</div>
 
-                <div class="text-center text-sm text-gray-500 dark:text-gray-400 sm:text-end sm:ms-0">
+                <div
+                    class="text-center text-sm text-gray-500 dark:text-gray-400 sm:text-end sm:ms-0"
+                >
                     Laravel v{{ laravelVersion }} (PHP v{{ phpVersion }})
                 </div>
             </div>
