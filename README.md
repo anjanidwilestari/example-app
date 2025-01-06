@@ -22,27 +22,41 @@ This is a learning project built with **Laravel 10**, **Vue.js**, and **Inertia.
 1. **Clone the repository**:
 
    ```bash
-   git clone
+   git clone https://github.com/anjanidwilestari/example-app.git
    cd example-app
 
 2. **Install dependencies**:
+
+   ```bash
    composer install
    npm install
 
 3. **Set up the environment**:
+
+   ```bash
    cp .env.example .env
-   Update the .env file with your database information
+   <!-- Update the .env file with your database information -->
    php artisan key:generate
 
 4. **Run the migrations**:
+   
+   ```bash
    php artisan migrate
 
 5. **Set up symlink (symbolic link)**:
+   
+   ```bash
    php artisan storage:link
 
 6. **Seeding**:
-   php artisan db:seed (optinonal)
+
+   ```bash
+   <!-- (optinonal) -->
+   php artisan db:seed 
+  
 
 7. **Run the app**:
+
+   ```bash
    npm run dev
    php artisan serve
