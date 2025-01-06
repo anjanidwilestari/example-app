@@ -37,6 +37,23 @@
               </div>
             </div>
 
+            <!-- Pilih Reason -->
+            <h3 class="text-2xl font-bold mb-4 mt-6">Pilih Reason</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div v-for="reason in reasons" :key="reason.id" class="p-4 border rounded flex items-center">
+                <input
+                  type="checkbox"
+                  :value="reason.id"
+                  v-model="selectedReasonsIds"
+                  :id="'reason-' + reason.id"
+                  class="mr-2"
+                />
+                <label :for="'reason-' + reason.id">
+                  {{ reason.title }}
+                </label>
+              </div>
+            </div>
+
             <!-- Tombol Simpan -->
             <button type="submit" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
               Simpan Pengaturan
@@ -57,11 +74,12 @@ import { Inertia } from '@inertiajs/inertia';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
 // Ambil data dari props yang dikirimkan oleh controller
-const { books, currentBook, testimonis, selectedTestimonisIds: initialSelectedTestimonisIds, csrfToken } = usePage().props;
+const { books, currentBook, testimonis, selectedTestimonisIds: initialSelectedTestimonisIds, reasons, selectedReasonsIds: initialSelectedReasonsIds, csrfToken } = usePage().props;
 
 // Inisialisasi data
 const selectedBookId = ref(currentBook?.id || null);
 const selectedTestimonisIds = ref(Array.isArray(initialSelectedTestimonisIds) ? initialSelectedTestimonisIds : []);
+const selectedReasonsIds = ref(Array.isArray(initialSelectedReasonsIds) ? initialSelectedReasonsIds : []);
 
 // Fungsi untuk menyimpan pengaturan
 const saveSettings = () => {
@@ -75,11 +93,17 @@ const saveSettings = () => {
     alert('Pilih tepat 3 testimoni.');
     return;
   }
+  
+  if (selectedReasonsIds.value.length !== 4) {
+    alert('Pilih tepat 4 reason.');
+    return;
+  }
 
   // Kirim data ke backend menggunakan Inertia
   Inertia.post(route('saveSettings'), {
     book_id: selectedBookId.value,
     testimoni_ids: selectedTestimonisIds.value, // Kirim array ID testimoni yang dipilih
+    reason_ids: selectedReasonsIds.value, // Kirim array ID reason yang dipilih
     _token: csrfToken, // Sertakan CSRF token jika diperlukan
   });
 };

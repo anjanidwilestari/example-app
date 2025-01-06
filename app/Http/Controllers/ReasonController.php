@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Reason;
+use App\Models\Setting;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
 
@@ -98,4 +99,23 @@ class ReasonController extends Controller
         return redirect()->route('reasons.index')->with('success', 'Reason deleted successfully.');
     }
     
+    public function selectReasons(Request $request)
+    {
+        // Validasi data yang dipilih
+        $request->validate([
+            'selected_reason_ids' => 'required|array|size:4',
+        ]);
+
+        // Ambil atau buat setting untuk user yang sedang login
+        $setting = Setting::firstOrCreate(
+            ['user_id' => auth()->id()],
+            ['selected_reason_ids' => json_encode($request->selected_reason_ids)]
+        );
+
+        // Update pengaturan dengan reason yang dipilih
+        $setting->selected_reason_ids = json_encode($request->selected_reason_ids);
+        $setting->save();
+
+        return response()->json($setting);
+    }
 }

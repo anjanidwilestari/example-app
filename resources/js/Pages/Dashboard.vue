@@ -28,7 +28,7 @@
           </div>
 
           <!-- Testimoni yang Dipilih -->
-          <div>
+          <div class="mb-8">
             <h3 class="text-2xl font-bold mb-4">Testimoni</h3>
             <div v-if="selectedTestimonis.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <div
@@ -41,6 +41,22 @@
               </div>
             </div>
             <p v-else class="text-red-500">Belum ada testimoni yang dipilih.</p>
+          </div>
+
+          <!-- Reason yang Dipilih -->
+          <div class="mb-8">
+            <h3 class="text-2xl font-bold mb-4">Reason</h3>
+            <div v-if="selectedReasons.length > 0" class="grid grid-cols-1 sm:grid-cols-4 lg:grid-cols-4 gap-4">
+              <div
+                v-for="reason in selectedReasons"
+                :key="reason.id"
+                class="card bg-gray-100 p-4 rounded-lg shadow-md"
+              >
+                <p class="text-gray-700"><strong>{{ reason.title }}</strong></p>
+                <p class="text-gray-600">{{ reason.description }}</p>
+              </div>
+            </div>
+            <p v-else class="text-red-500">Belum ada reason yang dipilih.</p>
           </div>
 
           <!-- Footer Custom -->
@@ -82,5 +98,5 @@ import { Head } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
-const { currentBook, selectedTestimonis, footers } = usePage().props;
+const { currentBook, selectedTestimonis, selectedReasons, footers } = usePage().props;
 </script>

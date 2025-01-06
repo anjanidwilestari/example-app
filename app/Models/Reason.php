@@ -9,5 +9,7 @@ class Reason extends Model
 {
     use HasFactory;
 
+    protected $table = 'reasons';
+
     protected $fillable = ['title', 'description', 'icon'];
 }

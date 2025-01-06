@@ -9,7 +9,7 @@ class Setting extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'selected_book_id', 'selected_testimoni_ids'];
+    protected $fillable = ['user_id', 'selected_book_id', 'selected_testimoni_ids', 'selected_reason_ids'];
 
     public function user()
     {
@@ -24,6 +24,11 @@ class Setting extends Model
     public function selectedTestimonis()
     {
         return Testimoni::whereIn('id', json_decode($this->selected_testimoni_ids, true))->get();
+    }
+
+    public function selectedReasons()
+    {
+        return Reason::whereIn('id', json_decode($this->selected_reason_ids, true))->get();
     }
 
 }

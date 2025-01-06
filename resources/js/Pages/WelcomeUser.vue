@@ -87,47 +87,26 @@
                           <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                             <div class="container mx-auto mt-10 lg:mt-5 px-4 lg:px-20">
                               <!-- Grid Layout: Kanan & Kiri -->
-                              <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-">
+                              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <!-- Kolom Kiri -->
                                 <div class="md:col-span-2">
                                   <!-- Baris 1 dengan 2 kolom -->
                                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div class="p-6 bg-white dark:bg-gray-800/50 dark:bg-gradient-to-bl from-gray-700/50 via-transparent dark:ring-1 dark:ring-inset dark:ring-white/5 rounded-lg shadow-2xl shadow-gray-500/20 dark:shadow-none flex motion-safe:hover:scale-[1.01] transition-all duration-250 focus:outline focus:outline-2 focus:outline-red-500">
+                                    <!-- Loop through selectedReasons to display dynamic content -->
+                                    <div
+                                      v-for="(reason, index) in currentReasons"
+                                      :key="reason.id"
+                                      class="p-6 bg-white dark:bg-gray-800/50 dark:bg-gradient-to-bl from-gray-700/50 via-transparent dark:ring-1 dark:ring-inset dark:ring-white/5 rounded-lg shadow-2xl shadow-gray-500/20 dark:shadow-none flex motion-safe:hover:scale-[1.01] transition-all duration-250 focus:outline focus:outline-2 focus:outline-red-500"
+                                    >
                                       <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 flex flex-col items-center">
-                                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Foto Profile" class="w-20 h-20 rounded-full object-cover mb-4" />
-                                        <h3 class="text-xl font-semibold">John Doe</h3>
-                                        <p class="text-gray-500 mb-4">Software Engineer</p>
-                                        <p class="text-gray-700 dark:text-gray-300 text-sm">"The services provided were outstanding, and I am thoroughly satisfied."</p>
-                                      </div>
-                                    </div>
-
-                                    <div class="p-6 bg-white dark:bg-gray-800/50 dark:bg-gradient-to-bl from-gray-700/50 via-transparent dark:ring-1 dark:ring-inset dark:ring-white/5 rounded-lg shadow-2xl shadow-gray-500/20 dark:shadow-none flex motion-safe:hover:scale-[1.01] transition-all duration-250 focus:outline focus:outline-2 focus:outline-red-500">
-                                      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 flex flex-col items-center">
-                                        <img src="https://randomuser.me/api/portraits/men/21.jpg" alt="Foto Profile" class="w-20 h-20 rounded-full object-cover mb-4" />
-                                        <h3 class="text-xl font-semibold">Alice Smith</h3>
-                                        <p class="text-gray-500 mb-4">Marketing Manager</p>
-                                        <p class="text-gray-700 dark:text-gray-300 text-sm">"The experience was seamless, and customer service was top-notch!"</p>
-                                      </div>
-                                    </div>
-                                  </div>
-
-                                  <!-- Baris 2 dengan 2 kolom -->
-                                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
-                                    <div class="p-6 bg-white dark:bg-gray-800/50 dark:bg-gradient-to-bl from-gray-700/50 via-transparent dark:ring-1 dark:ring-inset dark:ring-white/5 rounded-lg shadow-2xl shadow-gray-500/20 dark:shadow-none flex motion-safe:hover:scale-[1.01] transition-all duration-250 focus:outline focus:outline-2 focus:outline-red-500">
-                                      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 flex flex-col items-center">
-                                        <img src="https://randomuser.me/api/portraits/men/42.jpg" alt="Foto Profile" class="w-20 h-20 rounded-full object-cover mb-4" />
-                                        <h3 class="text-xl font-semibold">Robert Brown</h3>
-                                        <p class="text-gray-500 mb-4">Product Designer</p>
-                                        <p class="text-gray-700 dark:text-gray-300 text-sm">"Highly recommend! They truly go the extra mile to meet your needs."</p>
-                                      </div>
-                                    </div>
-
-                                    <div class="p-6 bg-white dark:bg-gray-800/50 dark:bg-gradient-to-bl from-gray-700/50 via-transparent dark:ring-1 dark:ring-inset dark:ring-white/5 rounded-lg shadow-2xl shadow-gray-500/20 dark:shadow-none flex motion-safe:hover:scale-[1.01] transition-all duration-250 focus:outline focus:outline-2 focus:outline-red-500">
-                                      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 flex flex-col items-center">
-                                        <img src="https://randomuser.me/api/portraits/men/29.jpg" alt="Foto Profile" class="w-20 h-20 rounded-full object-cover mb-4" />
-                                        <h3 class="text-xl font-semibold">Lily White</h3>
-                                        <p class="text-gray-500 mb-4">UI/UX Specialist</p>
-                                        <p class="text-gray-700 dark:text-gray-300 text-sm">"Incredible service! Made everything so easy to understand and use."</p>
+                                        <img
+                                          v-if="reason.icon"
+                                          :src="`/storage/icons/${reason.icon}`"
+                                          alt="Icon"
+                                          class="w-20 h-20 rounded-full object-cover mb-4"
+                                        />
+                                        <h3 class="text-xl font-semibold">{{ reason.title }}</h3>
+                                        <p class="text-gray-700 dark:text-gray-300 text-sm">{{ reason.description }}</p>
                                       </div>
                                     </div>
                                   </div>
@@ -138,8 +117,11 @@
                                   <h1 class="text-4xl md:text-5xl font-bold mb-4">Kenapa Memilih Kami?</h1>
                                   <h4 class="text-xl md:text-2xl font-semibold mb-6">Kami adalah pilihan terbaik untuk kebutuhan Anda.</h4>
                                   <p class="text-lg mb-6">Kami menawarkan layanan terbaik dengan kualitas yang sudah terjamin. Percayakan kebutuhan Anda kepada kami untuk hasil yang memuaskan.</p>
-                                  <button type="button" class="text-white bg-gradient-to-b from-pink-100 via-pink-400 to-pink-500 hover:bg-gradient-to-r focus:ring-4 focus:outline-none focus:ring-pink-300 dark:focus:ring-pink-800 shadow-lg shadow-pink-500/50 dark:shadow-lg dark:shadow-pink-800/80 font-medium rounded-lg text-sm px-6 py-3.5 text-center me-2 mb-2">
-                                    Lets dive in!
+                                  <button
+                                    type="button"
+                                    class="text-white bg-gradient-to-b from-pink-100 via-pink-400 to-pink-500 hover:bg-gradient-to-r focus:ring-4 focus:outline-none focus:ring-pink-300 dark:focus:ring-pink-800 shadow-lg shadow-pink-500/50 dark:shadow-lg dark:shadow-pink-800/80 font-medium rounded-lg text-sm px-6 py-3.5 text-center me-2 mb-2"
+                                  >
+                                    Let's dive in!
                                   </button>
                                 </div>
                               </div>
@@ -245,7 +227,7 @@
   import { province } from '@/data/province.js';
   
   // Mendapatkan data dari props yang dikirim oleh fungsi welcome() di backend
-  const { currentBook, currentTestimonis, footers, distributors } = usePage().props;
+  const { currentBook, currentTestimonis, currentReasons, footers, distributors } = usePage().props;
   
   // Reactive references untuk peta dan distributor
   const mapRef = ref(null);
