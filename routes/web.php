@@ -8,9 +8,8 @@ use App\Http\Controllers\BookController;
 use App\Http\Controllers\DistributorController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\FooterController;
-use App\Http\Controllers\SubFooterController;
-use App\Http\Controllers\IsiSubFooterController;
 use App\Http\Controllers\TestimoniController;
+use App\Http\Controllers\ReasonController;
 
 /*
 |--------------------------------------------------------------------------
@@ -68,7 +67,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/testimonis/{testimoni}', [TestimoniController::class, 'update'])->name('testimonis.update');
     Route::delete('/testimonis/{testimoni}', [TestimoniController::class, 'destroy'])->name('testimonis.destroy');
 
-
     //Footer
     Route::resource('footers', FooterController::class);
     Route::post('footers/{footer}/sub-footers', [FooterController::class, 'storeSubFooter'])->name('footers.storeSubFooter');
@@ -77,6 +75,17 @@ Route::middleware('auth')->group(function () {
 
     // Distributor
     Route::resource('distributors', DistributorController::class);
+
+    // Reason
+    Route::get('/reasons', [ReasonController::class, 'index'])->name('reasons.index');
+    Route::get('/reasons/{id}', [ReasonController::class, 'show'])->name('reasons.show');
+    Route::get('/reasons-create', [ReasonController::class, 'create'])->name('reasons.create');
+    Route::post('/reasons', [ReasonController::class, 'store'])->name('reasons.store');
+    Route::get('/reasons/{reason}/edit', [ReasonController::class, 'edit'])->name('reasons.edit');
+    Route::post('/reasons/{reason}', [ReasonController::class, 'update'])->name('reasons.update');
+    Route::delete('/reasons/{reason}', [ReasonController::class, 'destroy'])->name('reasons.destroy');
+
+
 });
 
 require __DIR__.'/auth.php';

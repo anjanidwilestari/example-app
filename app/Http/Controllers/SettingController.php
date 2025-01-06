@@ -15,9 +15,7 @@ use Illuminate\Support\Facades\Log;
 
 class SettingController extends Controller
 {
-    // Halaman welcome untuk user
-    // Halaman welcome untuk user (tidak memerlukan login) 
-    // Halaman welcome untuk publik
+    // Halaman welcome untuk publik (tidak memerlukan login) 
     public function welcome()
     {
         // Ambil pengaturan global (ambil record pertama dari tabel settings)

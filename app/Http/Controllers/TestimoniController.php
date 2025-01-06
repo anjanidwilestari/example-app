@@ -106,7 +106,6 @@ class TestimoniController extends Controller
             $testimoni->photo = basename($newPhoto);  // Simpan nama file tanpa path 'public/'
         }
         
-
         $testimoni->save();  // Simpan perubahan
 
         return redirect()->route('testimonis.index');

@@ -10,8 +10,6 @@ use Illuminate\Support\Facades\Log;
 
 class BookController extends Controller
 {
-    
-
     // Menampilkan daftar buku
     public function index()
     {
