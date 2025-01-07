@@ -15,6 +15,7 @@ use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductSubCategoryController;
 use App\Http\Controllers\ProductSpecificationController;
 use App\Http\Controllers\ProductFeatureController;
+use App\Http\Controllers\ProductGalleryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -95,6 +96,19 @@ Route::middleware('auth')->group(function () {
     Route::resource('product_sub_categories', ProductSubCategoryController::class);
     Route::resource('product_features', ProductFeatureController::class);
     Route::resource('product_specifications', ProductSpecificationController::class);
+
+
+    //Gallery
+    Route::prefix('product-galleries')->group(function () {
+        Route::get('{productId}', [ProductGalleryController::class, 'index'])->name('product_galleries.index');
+        Route::get('{id}/show', [ProductGalleryController::class, 'show'])->name('product_galleries.show');
+        Route::get('{productId}/create', [ProductGalleryController::class, 'create'])->name('product_galleries.create');
+        Route::post('', [ProductGalleryController::class, 'store'])->name('product_galleries.store');
+        Route::get('{id}/edit', [ProductGalleryController::class, 'edit'])->name('product_galleries.edit');
+        Route::put('{id}', [ProductGalleryController::class, 'update'])->name('product_galleries.update');
+        Route::delete('{id}', [ProductGalleryController::class, 'destroy'])->name('product_galleries.destroy');
+    });
+
     
 
 });

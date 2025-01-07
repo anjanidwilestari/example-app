@@ -30,4 +30,9 @@ class Product extends Model
     {
         return $this->hasMany(ProductSpecification::class);
     }
+
+    public function galleries()
+    {
+        return $this->hasMany(ProductGallery::class);
+    }
 }

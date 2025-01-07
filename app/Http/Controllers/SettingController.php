@@ -49,16 +49,19 @@ class SettingController extends Controller
 
     public function productShow($id)
     {
-        $product = Product::with(['features', 'specifications', 'category', 'subCategory'])->findOrFail($id);
-        $relatedProducts = Product::where('sub_category_id', $product->sub_category_id)
-                                   ->where('id', '!=', $id)
-                                   ->get();
+        $product = Product::with(['features', 'specifications', 'category', 'subCategory', 'galleries'])->findOrFail($id);
+
+        // Ensure each gallery image has a proper image URL
+        $product->galleries->each(function ($gallery) {
+            $gallery->image_url = asset('storage/' . $gallery->image_path); // Assuming image_path is stored in your database
+        });
 
         return inertia('ProductShow', [
             'product' => $product,
-            'relatedProducts' => $relatedProducts
         ]);
     }
+
+
 
     // Halaman dashboard untuk admin
     public function dashboard()

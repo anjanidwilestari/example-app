@@ -9,16 +9,12 @@
         <!-- Product Info -->
         <div class="product-info">
             <div class="product-images">
-                <img
-                    :src="product.image"
-                    alt="Product Image"
-                    class="main-image"
-                />
+                <!-- Thumbnails for Product Gallery -->
                 <div class="thumbnails">
                     <img
-                        v-for="image in product.images"
-                        :key="image.id"
-                        :src="image.url"
+                        v-for="gallery in product.galleries"
+                        :key="gallery.id"
+                        :src="gallery.image_url"
                         alt="Thumbnail"
                         class="thumbnail"
                     />
@@ -34,18 +30,6 @@
                 <div class="actions">
                     <button class="btn buy-now">Buy Now</button>
                     <button class="btn compare">Compare Product</button>
-                </div>
-
-                <!-- Options -->
-                <div class="options">
-                    <label>
-                        <input type="checkbox" />
-                        + Stand
-                    </label>
-                    <label>
-                        <input type="checkbox" />
-                        + UPS
-                    </label>
                 </div>
             </div>
         </div>
