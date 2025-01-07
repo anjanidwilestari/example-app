@@ -39,10 +39,7 @@ class BookController extends Controller
     // Menyimpan buku baru
     public function store(Request $request)
 {
-    // Tambahkan log untuk memeriksa apakah file sudah diterima
-    Log::info('Request data: ', $request->all());
-    Log::info('Files: ', $request->files->all());
-
+    // Validasi input
     $request->validate([
         'title' => 'required|string',
         'author' => 'required|string',

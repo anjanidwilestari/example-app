@@ -512,7 +512,7 @@ onMounted(() => {
     </div>
 
     <!-- Footer Section -->
-    <footer class="bg-gray-800 text-white py-8 mt-16">
+    <footer class="bg-gray-800 text-white py-8">
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <!-- Looping Footer Sections -->
