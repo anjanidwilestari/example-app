@@ -1,10 +1,20 @@
 <script setup>
 import { Head, Link } from "@inertiajs/vue3";
+import { ref } from "vue";
 
-defineProps({
+// Define props and access them directly
+const props = defineProps({
     product: Object,
     relatedProducts: Array,
 });
+
+// Reactive state for the main image
+const mainImage = ref(props.product.galleries[0]?.image_url);
+
+// Function to change the main image when a thumbnail is clicked
+const changeMainImage = (imageUrl) => {
+    mainImage.value = imageUrl;
+};
 </script>
 
 <template>
@@ -23,7 +33,7 @@ defineProps({
                     class="hover:text-gray-900 dark:hover:text-white"
                     >Products</a
                 >
-                &gt; <span class="font-semibold">{{ product.name }}</span>
+                &gt; <span class="font-semibold">{{ props.product.name }}</span>
             </nav>
 
             <!-- Product Info -->
@@ -31,20 +41,22 @@ defineProps({
                 <!-- Product Images -->
                 <div>
                     <div class="mb-4">
-                        <!-- Set a fixed width and height for the main image -->
+                        <!-- Main Image -->
                         <img
-                            :src="product.galleries[0]?.image_url"
+                            :src="mainImage"
                             alt="Main Image"
                             class="rounded-lg shadow-lg w-full max-w-md mx-auto object-cover h-80"
                         />
                     </div>
                     <div class="flex space-x-4 overflow-x-auto">
+                        <!-- Thumbnail Images -->
                         <img
-                            v-for="gallery in product.galleries"
+                            v-for="gallery in props.product.galleries"
                             :key="gallery.id"
                             :src="gallery.image_url"
                             alt="Gallery Image"
                             class="w-20 h-20 object-cover rounded-lg shadow-md cursor-pointer"
+                            @click="changeMainImage(gallery.image_url)"
                         />
                     </div>
                 </div>
@@ -54,13 +66,13 @@ defineProps({
                     <h1
                         class="text-3xl font-semibold text-gray-900 dark:text-white"
                     >
-                        {{ product.name }}
+                        {{ props.product.name }}
                     </h1>
                     <h2 class="text-xl text-gray-600 dark:text-gray-300">
-                        {{ product.category.name }}
+                        {{ props.product.category.name }}
                     </h2>
                     <p class="text-2xl font-bold text-gray-900 dark:text-white">
-                        Rp {{ product.price.toLocaleString() }}
+                        Rp {{ props.product.price.toLocaleString() }}
                     </p>
 
                     <!-- Actions -->
@@ -81,7 +93,7 @@ defineProps({
                     Deskripsi Produk
                 </h3>
                 <p class="mt-2 text-gray-700 dark:text-gray-300">
-                    {{ product.description }}
+                    {{ props.product.description }}
                 </p>
             </div>
 
@@ -95,7 +107,7 @@ defineProps({
                     </h4>
                     <ul class="mt-4 space-y-2 text-gray-700 dark:text-gray-300">
                         <li
-                            v-for="feature in product.features"
+                            v-for="feature in props.product.features"
                             :key="feature.id"
                         >
                             <span class="font-semibold"
@@ -113,7 +125,8 @@ defineProps({
                     </h4>
                     <ul class="mt-4 space-y-2 text-gray-700 dark:text-gray-300">
                         <li
-                            v-for="specification in product.specifications"
+                            v-for="specification in props.product
+                                .specifications"
                             :key="specification.id"
                         >
                             <span class="font-semibold"
@@ -136,7 +149,7 @@ defineProps({
                     class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mt-6"
                 >
                     <div
-                        v-for="relatedProduct in relatedProducts"
+                        v-for="relatedProduct in props.relatedProducts"
                         :key="relatedProduct.id"
                         class="border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden shadow-lg"
                     >
