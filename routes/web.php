@@ -10,6 +10,11 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\FooterController;
 use App\Http\Controllers\TestimoniController;
 use App\Http\Controllers\ReasonController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductCategoryController;
+use App\Http\Controllers\ProductSubCategoryController;
+use App\Http\Controllers\ProductSpecificationController;
+use App\Http\Controllers\ProductFeatureController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,7 +37,7 @@ Route::get('/', function () {
 });
 
 Route::get('/welcome', [SettingController::class, 'welcome'])->name('welcome'); // Tampilan Welcome User
-
+Route::get('/product/{id}', [SettingController::class, 'productShow'])->name('productShow');
 // Route::get('/dashboard', function () {
 //     return Inertia::render('Dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
@@ -85,6 +90,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/reasons/{reason}', [ReasonController::class, 'update'])->name('reasons.update');
     Route::delete('/reasons/{reason}', [ReasonController::class, 'destroy'])->name('reasons.destroy');
 
+    Route::resource('products', ProductController::class);
+    Route::resource('product_categories', ProductCategoryController::class);
+    Route::resource('product_sub_categories', ProductSubCategoryController::class);
+    Route::resource('product_features', ProductFeatureController::class);
+    Route::resource('product_specifications', ProductSpecificationController::class);
+    
 
 });
 

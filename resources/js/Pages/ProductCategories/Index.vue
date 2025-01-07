@@ -1,15 +1,38 @@
 <script setup>
+import { Inertia } from "@inertiajs/inertia";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
+
+// Props
+defineProps({
+    categories: Array, // Menerima data kategori produk dari Inertia
+});
+
+// Methods
+const deleteCategory = (categoryId) => {
+    if (confirm("Apakah Anda yakin ingin menghapus kategori produk ini?")) {
+        Inertia.delete(window.route("product_categories.destroy", categoryId));
+    }
+};
+
+const truncateDescription = (description) => {
+    if (description) {
+        if (description.length > 50) {
+            return description.slice(0, 50) + "..."; // Gabungkan 50 karakter pertama dan tambahkan titik-titik
+        }
+        return description;
+    }
+    return ""; // Jika tidak ada deskripsi
+};
 </script>
 
 <template>
     <section>
-        <Head title="Reasons"> </Head>
+        <Head title="Product Categories"> </Head>
         <AuthenticatedLayout>
             <template #header>
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                    Daftar Reasons
+                    Daftar Kategori Produk
                 </h2>
             </template>
 
@@ -22,17 +45,16 @@ import { Head } from "@inertiajs/vue3";
                             <div class="mb-4">
                                 <!-- Menggunakan Link dari Inertia untuk navigasi -->
                                 <inertia-link
-                                    :href="route('reasons.create')"
+                                    :href="route('product_categories.create')"
                                     class="bg-blue-500 text-white px-4 py-2 rounded"
-                                    >Tambah Testimoni</inertia-link
+                                    >Tambah Kategori Produk</inertia-link
                                 >
                             </div>
 
                             <table class="w-full">
                                 <thead>
                                     <tr>
-                                        <th class="px-4 py-2 border">Icon</th>
-                                        <th class="px-4 py-2 border">Judul</th>
+                                        <th class="px-4 py-2 border">Nama</th>
                                         <th class="px-4 py-2 border">
                                             Deskripsi
                                         </th>
@@ -41,36 +63,21 @@ import { Head } from "@inertiajs/vue3";
                                 </thead>
 
                                 <tbody>
-                                    <!-- Loop untuk menampilkan reason -->
+                                    <!-- Loop untuk menampilkan kategori produk -->
                                     <tr
-                                        v-for="reason in reasons"
-                                        :key="reason.id"
+                                        v-for="category in categories"
+                                        :key="category.id"
                                     >
-                                        <!-- Menampilkan Icon -->
+                                        <!-- Nama Kategori -->
                                         <td class="px-4 py-2 border">
-                                            <img
-                                                v-if="reason.icon"
-                                                :src="`/storage/icons/${reason.icon}`"
-                                                alt="Icon-Reason"
-                                                class="media-thumbnail"
-                                            />
-                                            <p
-                                                v-else
-                                                class="w-10 h-10 rounded-full bg-gray-300"
-                                            ></p>
-                                            <!-- Placeholder jika tidak ada foto -->
+                                            {{ category.name }}
                                         </td>
 
-                                        <!-- Judul -->
-                                        <td class="px-4 py-2 border">
-                                            {{ reason.title }}
-                                        </td>
-
-                                        <!-- Deskripsi -->
+                                        <!-- Deskripsi Kategori -->
                                         <td class="px-4 py-2 border">
                                             {{
                                                 truncateDescription(
-                                                    reason.description,
+                                                    category.description,
                                                 )
                                             }}
                                         </td>
@@ -80,8 +87,8 @@ import { Head } from "@inertiajs/vue3";
                                             <inertia-link
                                                 :href="
                                                     route(
-                                                        'reasons.edit',
-                                                        reason.id,
+                                                        'product_categories.edit',
+                                                        category.id,
                                                     )
                                                 "
                                                 class="bg-yellow-500 text-white px-4 py-2 rounded"
@@ -90,15 +97,17 @@ import { Head } from "@inertiajs/vue3";
                                             <inertia-link
                                                 :href="
                                                     route(
-                                                        'reasons.show',
-                                                        reason.id,
+                                                        'product_categories.show',
+                                                        category.id,
                                                     )
                                                 "
                                                 class="bg-green-500 text-white px-4 py-2 rounded"
                                                 >Show</inertia-link
                                             >
                                             <button
-                                                @click="deleteReason(reason.id)"
+                                                @click="
+                                                    deleteCategory(category.id)
+                                                "
                                                 class="bg-red-500 text-white px-4 py-2 rounded"
                                             >
                                                 Hapus
@@ -114,35 +123,6 @@ import { Head } from "@inertiajs/vue3";
         </AuthenticatedLayout>
     </section>
 </template>
-
-<script>
-import { Inertia } from "@inertiajs/inertia";
-
-export default {
-    props: {
-        reasons: Array, // Menerima data reason dari Inertia
-    },
-    methods: {
-        // Fungsi untuk menghapus reason
-        deleteReason(reasonId) {
-            if (confirm("Apakah Anda yakin ingin menghapus reason ini?")) {
-                Inertia.delete(window.route("reasons.destroy", reasonId));
-            }
-        },
-
-        // Fungsi untuk memotong review menjadi 50 karakter dan menambahkan titik-titik
-        truncateDescription(description) {
-            if (description) {
-                if (description.length > 50) {
-                    return description.slice(0, 50) + "..."; // Gabungkan 50 karakter pertama dan tambahkan titik-titik
-                }
-                return description;
-            }
-            return ""; // Jika tidak ada review
-        },
-    },
-};
-</script>
 
 <style scoped>
 /* Styling untuk gambar dengan rasio 1:1 */

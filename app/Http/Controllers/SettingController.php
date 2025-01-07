@@ -9,6 +9,7 @@ use App\Models\Setting;
 use App\Models\Testimoni;
 use App\Models\Distributor;
 use App\Models\Reason;
+use App\Models\Product;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
@@ -43,6 +44,19 @@ class SettingController extends Controller
             'currentReasons' => $selectedReasons, // Pastikan data testimonis dikirim
             'footers' => $footers, 
             'distributors' => $distributors,
+        ]);
+    }
+
+    public function productShow($id)
+    {
+        $product = Product::with(['features', 'specifications', 'category', 'subCategory'])->findOrFail($id);
+        $relatedProducts = Product::where('sub_category_id', $product->sub_category_id)
+                                   ->where('id', '!=', $id)
+                                   ->get();
+
+        return inertia('ProductShow', [
+            'product' => $product,
+            'relatedProducts' => $relatedProducts
         ]);
     }
 
