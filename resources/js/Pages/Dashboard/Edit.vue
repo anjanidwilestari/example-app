@@ -4,6 +4,7 @@ import { ref } from "vue";
 import { usePage } from "@inertiajs/vue3";
 import { Inertia } from "@inertiajs/inertia";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import CheckboxInput from "@/Components/Checkbox.vue";
 
 // Ambil data dari props yang dikirimkan oleh controller
 const {
@@ -94,22 +95,14 @@ const saveSettings = () => {
                         <div
                             class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
                         >
-                            <div
+                            <CheckboxInput
                                 v-for="testimoni in testimonis"
                                 :key="testimoni.id"
-                                class="p-4 border rounded flex items-center"
-                            >
-                                <input
-                                    type="checkbox"
-                                    :value="testimoni.id"
-                                    v-model="selectedTestimonisIds"
-                                    :id="'testimoni-' + testimoni.id"
-                                    class="mr-2"
-                                />
-                                <label :for="'testimoni-' + testimoni.id">
-                                    {{ testimoni.name_customer }}
-                                </label>
-                            </div>
+                                :value="testimoni.id"
+                                v-model="selectedTestimonisIds"
+                                :id="'testimoni-' + testimoni.id"
+                                :label="testimoni.name_customer"
+                            />
                         </div>
 
                         <!-- Pilih Reason -->
@@ -119,22 +112,14 @@ const saveSettings = () => {
                         <div
                             class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
                         >
-                            <div
+                            <CheckboxInput
                                 v-for="reason in reasons"
                                 :key="reason.id"
-                                class="p-4 border rounded flex items-center"
-                            >
-                                <input
-                                    type="checkbox"
-                                    :value="reason.id"
-                                    v-model="selectedReasonsIds"
-                                    :id="'reason-' + reason.id"
-                                    class="mr-2"
-                                />
-                                <label :for="'reason-' + reason.id">
-                                    {{ reason.title }}
-                                </label>
-                            </div>
+                                :value="reason.id"
+                                v-model="selectedReasonsIds"
+                                :id="'reason-' + reason.id"
+                                :label="reason.title"
+                            />
                         </div>
 
                         <!-- Tombol Simpan -->
