@@ -1,220 +1,211 @@
+<script setup>
+import { Head, Link } from "@inertiajs/vue3";
+
+defineProps({
+    product: Object,
+    relatedProducts: Array,
+});
+</script>
+
 <template>
-    <div class="product-detail container">
-        <!-- Breadcrumb -->
-        <nav class="breadcrumb">
-            <a href="/">Home</a> &gt; <a href="/products">Product</a> &gt;
-            {{ product.name }}
-        </nav>
+    <Head title="Product Details" />
 
-        <!-- Product Info -->
-        <div class="product-info">
-            <div class="product-images">
-                <!-- Thumbnails for Product Gallery -->
-                <div class="thumbnails">
-                    <img
-                        v-for="gallery in product.galleries"
-                        :key="gallery.id"
-                        :src="gallery.image_url"
-                        alt="Thumbnail"
-                        class="thumbnail"
-                    />
-                </div>
-            </div>
-
-            <div class="product-details">
-                <h1>{{ product.name }}</h1>
-                <h2>{{ product.category.name }}</h2>
-                <p class="price">Rp {{ product.price.toLocaleString() }}</p>
-
-                <!-- Actions -->
-                <div class="actions">
-                    <button class="btn buy-now">Buy Now</button>
-                    <button class="btn compare">Compare Product</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Product Description -->
-        <div class="product-description">
-            <h3>Deskripsi Produk</h3>
-            <p>{{ product.description }}</p>
-
-            <div class="features">
-                <h4>Fitur</h4>
-                <ul>
-                    <li v-for="feature in product.features" :key="feature.id">
-                        {{ feature.feature }} - {{ feature.description }}
-                    </li>
-                </ul>
-            </div>
-
-            <div class="specifications">
-                <h4>Spesifikasi</h4>
-                <ul>
-                    <li
-                        v-for="specification in product.specifications"
-                        :key="specification.id"
-                    >
-                        {{ specification.specification }}:
-                        {{ specification.description }}
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- Related Products -->
-        <div class="related-products">
-            <h3>Produk Terkait</h3>
-            <div class="products-grid">
-                <div
-                    v-for="relatedProduct in relatedProducts"
-                    :key="relatedProduct.id"
-                    class="product-card"
+    <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+        <div class="max-w-7xl mx-auto p-6 lg:p-8">
+            <!-- Breadcrumb -->
+            <nav class="text-gray-600 dark:text-gray-400 text-sm mb-6">
+                <a href="/" class="hover:text-gray-900 dark:hover:text-white"
+                    >Home</a
                 >
-                    <img
-                        :src="relatedProduct.image"
-                        alt="Product Image"
-                        class="product-image"
-                    />
-                    <h4>{{ relatedProduct.name }}</h4>
-                    <p>{{ relatedProduct.sub_category.name }}</p>
-                    <p class="price">
-                        Rp {{ relatedProduct.price.toLocaleString() }}
+                &gt;
+                <a
+                    href="/products"
+                    class="hover:text-gray-900 dark:hover:text-white"
+                    >Products</a
+                >
+                &gt; <span class="font-semibold">{{ product.name }}</span>
+            </nav>
+
+            <!-- Product Info -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Product Images -->
+                <div>
+                    <div class="mb-4">
+                        <!-- Set a fixed width and height for the main image -->
+                        <img
+                            :src="product.galleries[0]?.image_url"
+                            alt="Main Image"
+                            class="rounded-lg shadow-lg w-full max-w-md mx-auto object-cover h-80"
+                        />
+                    </div>
+                    <div class="flex space-x-4 overflow-x-auto">
+                        <img
+                            v-for="gallery in product.galleries"
+                            :key="gallery.id"
+                            :src="gallery.image_url"
+                            alt="Gallery Image"
+                            class="w-20 h-20 object-cover rounded-lg shadow-md cursor-pointer"
+                        />
+                    </div>
+                </div>
+
+                <!-- Product Details -->
+                <div class="space-y-6">
+                    <h1
+                        class="text-3xl font-semibold text-gray-900 dark:text-white"
+                    >
+                        {{ product.name }}
+                    </h1>
+                    <h2 class="text-xl text-gray-600 dark:text-gray-300">
+                        {{ product.category.name }}
+                    </h2>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                        Rp {{ product.price.toLocaleString() }}
                     </p>
+
+                    <!-- Actions -->
+                    <div class="flex space-x-4 mt-4">
+                        <button class="btn-primary px-6 py-2">Buy Now</button>
+                        <button class="btn-secondary px-6 py-2">
+                            Compare Product
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Description -->
+            <div class="mt-12">
+                <h3
+                    class="text-2xl font-semibold text-gray-900 dark:text-white"
+                >
+                    Deskripsi Produk
+                </h3>
+                <p class="mt-2 text-gray-700 dark:text-gray-300">
+                    {{ product.description }}
+                </p>
+            </div>
+
+            <!-- Features and Specifications -->
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h4
+                        class="text-xl font-semibold text-gray-900 dark:text-white"
+                    >
+                        Fitur
+                    </h4>
+                    <ul class="mt-4 space-y-2 text-gray-700 dark:text-gray-300">
+                        <li
+                            v-for="feature in product.features"
+                            :key="feature.id"
+                        >
+                            <span class="font-semibold"
+                                >{{ feature.feature }}:</span
+                            >
+                            {{ feature.description }}
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h4
+                        class="text-xl font-semibold text-gray-900 dark:text-white"
+                    >
+                        Spesifikasi
+                    </h4>
+                    <ul class="mt-4 space-y-2 text-gray-700 dark:text-gray-300">
+                        <li
+                            v-for="specification in product.specifications"
+                            :key="specification.id"
+                        >
+                            <span class="font-semibold"
+                                >{{ specification.specification }}:</span
+                            >
+                            {{ specification.description }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Related Products -->
+            <div class="mt-12">
+                <h3
+                    class="text-2xl font-semibold text-gray-900 dark:text-white"
+                >
+                    Produk Terkait
+                </h3>
+                <div
+                    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mt-6"
+                >
+                    <div
+                        v-for="relatedProduct in relatedProducts"
+                        :key="relatedProduct.id"
+                        class="border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden shadow-lg"
+                    >
+                        <img
+                            :src="relatedProduct.image"
+                            alt="Product Image"
+                            class="w-full h-48 object-cover"
+                        />
+                        <div class="p-4 space-y-2">
+                            <h4
+                                class="text-lg font-semibold text-gray-900 dark:text-white"
+                            >
+                                {{ relatedProduct.name }}
+                            </h4>
+                            <p class="text-gray-600 dark:text-gray-400">
+                                {{ relatedProduct.sub_category.name }}
+                            </p>
+                            <p
+                                class="text-xl font-semibold text-gray-900 dark:text-white"
+                            >
+                                Rp {{ relatedProduct.price.toLocaleString() }}
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </template>
 
-<script>
-export default {
-    props: {
-        product: Object,
-        relatedProducts: Array,
-    },
-};
-</script>
-
 <style scoped>
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-.breadcrumb a {
-    color: #007bff;
-    text-decoration: none;
-}
-
-.breadcrumb a:hover {
-    text-decoration: underline;
-}
-
-.product-info {
-    display: flex;
-    gap: 20px;
-    margin-top: 20px;
-}
-
-.product-images {
-    flex: 1;
-}
-
-.main-image {
-    width: 100%;
-    height: auto;
-    border-radius: 10px;
-}
-
-.thumbnails {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.thumbnail {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.product-details {
-    flex: 2;
-}
-
-.price {
-    font-size: 24px;
-    color: #333;
-    margin-top: 10px;
-}
-
-.actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.btn {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.buy-now {
+/* Global button styles */
+.btn-primary {
     background-color: #007bff;
-    color: #fff;
-}
-
-.compare {
-    background-color: #6c757d;
-    color: #fff;
-}
-
-.options {
-    margin-top: 20px;
-}
-
-.product-description {
-    margin-top: 40px;
-}
-
-.features,
-.specifications {
-    margin-top: 20px;
-}
-
-.related-products {
-    margin-top: 40px;
-}
-
-.products-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-}
-
-.product-card {
-    width: calc(33.333% - 20px);
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
     text-align: center;
+    cursor: pointer;
 }
 
-.product-image {
-    width: 100%;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 10px;
+.btn-primary:hover {
+    background-color: #0056b3;
 }
 
-.price {
-    font-weight: bold;
-    margin-top: 10px;
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+/* Image Styles */
+.product-images img {
+    max-width: 100%;
+    height: auto;
+}
+
+@media (max-width: 640px) {
+    .product-images img {
+        max-width: 100%;
+    }
 }
 </style>
