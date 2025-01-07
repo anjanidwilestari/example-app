@@ -158,7 +158,7 @@ class SettingController extends Controller
         }
 
         // Redirect kembali dengan pesan sukses
-        return redirect()->route('dashboard.edit')->with('success', 'Pengaturan berhasil disimpan!');
+        return redirect()->route('dashboard')->with('success', 'Pengaturan berhasil disimpan!');
     }
 
 }
