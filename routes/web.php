@@ -16,6 +16,7 @@ use App\Http\Controllers\ProductSubCategoryController;
 use App\Http\Controllers\ProductSpecificationController;
 use App\Http\Controllers\ProductFeatureController;
 use App\Http\Controllers\ProductGalleryController;
+use App\Http\Controllers\ContactElitechController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +37,8 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
+
+
 
 Route::get('/welcome', [SettingController::class, 'welcome'])->name('welcome'); // Tampilan Welcome User
 Route::get('/product/{id}', [SettingController::class, 'productShow'])->name('productShow');
@@ -109,6 +112,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('{id}', [ProductGalleryController::class, 'destroy'])->name('product_galleries.destroy');
     });
 
+    Route::resource('contact_elitechs', ContactElitechController::class);
     
 
 });
