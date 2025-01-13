@@ -75,8 +75,8 @@ const deleteProduct = async (id) => {
                                         </td>
                                         <td class="px-4 py-2 border">
                                             {{
-                                                product.subCategory
-                                                    ? product.subCategory.name
+                                                product.sub_category
+                                                    ? product.sub_category.name
                                                     : "No Subcategory"
                                             }}
                                         </td>

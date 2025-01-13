@@ -8,6 +8,7 @@ use App\Models\ProductSubCategory;
 use App\Models\ProductFeature;
 use App\Models\ProductSpecification;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class ProductController extends Controller
 {
@@ -38,11 +39,16 @@ class ProductController extends Controller
         return redirect()->route('products.index');
     }
 
-    public function show($id)
+    public function show(Product $product)
     {
-        $product = Product::with('category', 'subCategory', 'features', 'specifications')->findOrFail($id);
-        return inertia('Products/Show', ['product' => $product]);
+        $product->load(['category', 'subCategory']);
+        return Inertia::render('Products/Show', [
+            'product' => $product,
+            'categories' => ProductCategory::all(),
+            'subCategories' => ProductSubCategory::all(),
+        ]);
     }
+    
 
     public function edit($id)
     {

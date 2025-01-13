@@ -90,11 +90,11 @@ const numberFormat = (value) => {
                                 </h3>
                                 <p class="text-lg text-gray-600">
                                     {{
-                                        props.categories?.find(
-                                            (cat) =>
-                                                cat.id ===
-                                                props.product?.category_id,
-                                        )?.name || "Unknown"
+                                        categories.find(
+                                            (category) =>
+                                                category.id ===
+                                                props.product.category_id,
+                                        )?.name || "No Category"
                                     }}
                                 </p>
                             </div>
@@ -108,11 +108,11 @@ const numberFormat = (value) => {
                                 </h3>
                                 <p class="text-lg text-gray-600">
                                     {{
-                                        props.subCategories?.find(
+                                        subCategories.find(
                                             (sub) =>
                                                 sub.id ===
-                                                props.product?.sub_category_id,
-                                        )?.name || "Unknown"
+                                                props.product.sub_category_id,
+                                        )?.name || "No Subcategory"
                                     }}
                                 </p>
                             </div>
