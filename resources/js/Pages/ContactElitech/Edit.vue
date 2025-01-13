@@ -25,7 +25,6 @@ const submitForm = () => {
     form.put(route("contact_elitechs.update", props.contact.id));
 };
 </script>
-
 <template>
     <section>
         <Head title="Edit Contact Elitech" />
@@ -43,12 +42,24 @@ const submitForm = () => {
                             @submit.prevent="submitForm"
                             class="mt-6 space-y-6"
                         >
-                            <div v-for="(values, key) in form" :key="key">
+                            <!-- Loop only through specific form fields (like whatsapp_number, phone_number, etc.) -->
+                            <div
+                                v-for="(key, index) in [
+                                    'whatsapp_number',
+                                    'phone_number',
+                                    'email',
+                                    'instagram',
+                                    'youtube',
+                                    'address',
+                                    'link_maps',
+                                ]"
+                                :key="index"
+                            >
                                 <h3 class="text-lg font-medium capitalize">
                                     {{ key.replace("_", " ") }}
                                 </h3>
                                 <div
-                                    v-for="(value, index) in values"
+                                    v-for="(value, index) in form[key]"
                                     :key="index"
                                 >
                                     <label
