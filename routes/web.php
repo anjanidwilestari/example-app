@@ -113,8 +113,10 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::resource('contact_elitechs', ContactElitechController::class);
+    Route::post('/products/{product}/add-feature', [ProductController::class, 'addFeature'])->name('products.add-feature');
+    Route::patch('/products/{product}/edit-feature/{feature}', [ProductController::class, 'editFeature'])->name('products.edit-feature');
+    Route::delete('/products/{product}/delete-feature/{feature}', [ProductController::class, 'deleteFeature'])->name('products.delete-feature');
     
-
 });
 
 require __DIR__.'/auth.php';
