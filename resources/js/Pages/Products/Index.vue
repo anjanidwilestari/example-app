@@ -1,11 +1,15 @@
 <script setup>
 import { Inertia } from "@inertiajs/inertia";
+import { ref } from "vue";
 import { Head } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import Create from "./Create.vue";
 
 // Properti yang diterima dari parent
 defineProps({
     products: Array,
+    categories: Array,
+    subCategories: Array,
 });
 
 // Fungsi untuk menghapus produk
@@ -13,6 +17,19 @@ const deleteProduct = async (id) => {
     if (confirm("Apakah Anda yakin ingin menghapus produk ini?")) {
         await Inertia.delete(route("products.destroy", id));
     }
+};
+
+// State untuk mengatur visibilitas modal
+const isModalOpen = ref(false);
+
+// Fungsi untuk membuka modal
+const openModal = () => {
+    isModalOpen.value = true;
+};
+
+// Fungsi untuk menutup modal
+const closeModal = () => {
+    isModalOpen.value = false;
 };
 </script>
 
@@ -34,15 +51,24 @@ const deleteProduct = async (id) => {
                     >
                         <div class="p-6 text-gray-900">
                             <div class="mb-4">
-                                <!-- Link to add a new product -->
-                                <inertia-link
-                                    :href="route('products.create')"
+                                <!-- Button to open modal -->
+                                <button
+                                    @click="openModal"
                                     class="bg-blue-500 text-white px-4 py-2 rounded"
                                 >
                                     Tambah Produk
-                                </inertia-link>
+                                </button>
+
+                                <!-- Modal component -->
+                                <Create
+                                    v-if="isModalOpen"
+                                    :categories="categories"
+                                    :subCategories="subCategories"
+                                    @close="closeModal"
+                                />
                             </div>
 
+                            <!-- Table of products -->
                             <table class="w-full table-auto">
                                 <thead>
                                     <tr>
@@ -57,7 +83,6 @@ const deleteProduct = async (id) => {
                                         <th class="px-4 py-2 border">Aksi</th>
                                     </tr>
                                 </thead>
-
                                 <tbody>
                                     <tr
                                         v-for="product in products"
@@ -80,7 +105,6 @@ const deleteProduct = async (id) => {
                                                     : "No Subcategory"
                                             }}
                                         </td>
-
                                         <td class="px-4 py-2 border">
                                             {{ product.price }}
                                         </td>
@@ -93,9 +117,8 @@ const deleteProduct = async (id) => {
                                                     )
                                                 "
                                                 class="bg-green-500 text-white px-4 py-2 rounded"
+                                                >Lihat</inertia-link
                                             >
-                                                Lihat
-                                            </inertia-link>
                                             <inertia-link
                                                 :href="
                                                     route(
@@ -104,9 +127,8 @@ const deleteProduct = async (id) => {
                                                     )
                                                 "
                                                 class="bg-yellow-500 text-white px-4 py-2 rounded"
+                                                >Edit</inertia-link
                                             >
-                                                Edit
-                                            </inertia-link>
                                             <button
                                                 @click="
                                                     deleteProduct(product.id)

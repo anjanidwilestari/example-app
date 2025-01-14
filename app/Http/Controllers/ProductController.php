@@ -15,8 +15,17 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::with(['category', 'subCategory'])->get();
-        return inertia('Products/Index', ['products' => $products]);
+        $categories = ProductCategory::all();
+        $subCategories = ProductSubCategory::all();
+
+        return inertia('Products/Index', [
+            'products' => $products,
+            'categories' => $categories,
+            'subCategories' => $subCategories,
+        ]);
     }
+
+
 
     public function create()
     {
