@@ -178,6 +178,52 @@
                                         Tambah
                                     </button>
                                 </div>
+
+                                <!-- Add new galleries product -->
+                                <div class="mt-8">
+                                    <h3 class="text-lg font-semibold">
+                                        Product Galleries
+                                    </h3>
+
+                                    <!-- List of existing galleries -->
+                                    <ul class="mt-4 space-y-2">
+                                        <li
+                                            v-for="gallery in galleries"
+                                            :key="gallery.id"
+                                            class="flex items-center gap-2"
+                                        >
+                                            <img
+                                                :src="gallery.image_path"
+                                                alt="Product Image"
+                                                class="w-32 h-32 object-cover"
+                                            />
+                                            <button
+                                                @click.prevent="
+                                                    deleteGallery(gallery.id)
+                                                "
+                                                class="text-red-600 hover:text-red-800"
+                                            >
+                                                Hapus
+                                            </button>
+                                        </li>
+                                    </ul>
+
+                                    <!-- Add new gallery input -->
+                                    <div class="flex items-center gap-2 mt-4">
+                                        <input
+                                            ref="imageInput"
+                                            type="file"
+                                            @change="handleFileUpload"
+                                            class="form-input block w-full"
+                                        />
+                                        <button
+                                            @click.prevent="addGallery"
+                                            class="text-green-600 hover:text-green-800"
+                                        >
+                                            Tambah
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Submit Button -->
@@ -195,7 +241,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useForm } from "@inertiajs/vue3";
 import { Head } from "@inertiajs/vue3";
 import InputError from "@/Components/InputError.vue";
@@ -210,6 +256,7 @@ const props = defineProps({
     categories: Array,
     subCategories: Array,
     features: Array, // Receiving features from the server
+    galleries: { type: Array, default: () => [] }, // Ensure galleries is always an array
 });
 
 const form = useForm({
@@ -222,6 +269,9 @@ const form = useForm({
 
 const newFeature = ref({ feature: "", description: "" });
 const features = ref([...props.features]); // Initialize features array
+
+// Ensure galleries is always an array
+const galleries = ref([...props.galleries]);
 
 // Submit the form to update the product
 const submitForm = () => {
@@ -271,6 +321,67 @@ const deleteFeature = (featureId) => {
                 features.value = features.value.filter(
                     (feature) => feature.id !== featureId,
                 ); // Remove the feature from the list
+            },
+        },
+    );
+};
+
+// New gallery data
+const newGallery = ref({
+    name: "",
+    image: null, // For storing the uploaded image
+});
+
+// Handle file upload
+const handleFileUpload = (event) => {
+    newGallery.value.image = event.target.files[0]; // Store the uploaded image
+};
+const addGallery = () => {
+    if (!newGallery.value.image) return; // Ensure image is selected
+
+    const formData = new FormData();
+    formData.append("image", newGallery.value.image); // Add the image to the FormData
+
+    Inertia.post(route("products.add-gallery", props.product.id), formData, {
+        onSuccess: (response) => {
+            galleries.value.push(response.gallery); // Add the new gallery to the list
+            newGallery.value.image = null; // Reset the file input
+            if (this.$refs.imageInput) {
+                this.$refs.imageInput.value = ""; // Reset file input display
+            }
+        },
+    });
+};
+const updateGallery = (gallery) => {
+    const formData = new FormData();
+    if (gallery.newImage) {
+        formData.append("image", gallery.newImage); // Append the new image if selected
+    }
+
+    Inertia.patch(
+        route("products.edit-gallery", [props.product.id, gallery.id]),
+        formData,
+        {
+            onSuccess: (response) => {
+                const updatedGallery = galleries.value.find(
+                    (g) => g.id === gallery.id,
+                );
+                updatedGallery.image_path = response.gallery.image_path; // Update image URL
+                updatedGallery.newImage = null; // Reset the new image field
+            },
+        },
+    );
+};
+
+// Delete gallery
+const deleteGallery = (galleryId) => {
+    Inertia.delete(
+        route("products.delete-gallery", [props.product.id, galleryId]),
+        {
+            onSuccess: () => {
+                galleries.value = galleries.value.filter(
+                    (g) => g.id !== galleryId,
+                ); // Remove the gallery from the list
             },
         },
     );

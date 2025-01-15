@@ -117,6 +117,10 @@ Route::middleware('auth')->group(function () {
     Route::patch('/products/{product}/edit-feature/{feature}', [ProductController::class, 'editFeature'])->name('products.edit-feature');
     Route::delete('/products/{product}/delete-feature/{feature}', [ProductController::class, 'deleteFeature'])->name('products.delete-feature');
     
+    Route::post('/products/{product}/add-gallery', [ProductController::class, 'addGallery'])->name('products.add-gallery');
+Route::patch('/products/{product}/edit-gallery/{gallery}', [ProductController::class, 'editGallery'])->name('products.edit-gallery');
+Route::delete('/products/{product}/delete-gallery/{gallery}', [ProductController::class, 'deleteGallery'])->name('products.delete-gallery');
+
 });
 
 require __DIR__.'/auth.php';
