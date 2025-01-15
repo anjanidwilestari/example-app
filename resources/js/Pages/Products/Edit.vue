@@ -180,7 +180,7 @@
                                 </div>
 
                                 <!-- Add new galleries product -->
-                                <div class="mt-8">
+                                <div>
                                     <h3 class="text-lg font-semibold">
                                         Product Galleries
                                     </h3>
@@ -192,8 +192,13 @@
                                             :key="gallery.id"
                                             class="flex items-center gap-2"
                                         >
+                                            <!-- Ensure that the image is being displayed with the correct URL -->
                                             <img
-                                                :src="gallery.image_path"
+                                                :src="
+                                                    getImageUrl(
+                                                        gallery.image_path,
+                                                    )
+                                                "
                                                 alt="Product Image"
                                                 class="w-32 h-32 object-cover"
                                             />
@@ -328,9 +333,13 @@ const deleteFeature = (featureId) => {
 
 // New gallery data
 const newGallery = ref({
-    name: "",
     image: null, // For storing the uploaded image
 });
+
+// Method to get full URL for image
+const getImageUrl = (imagePath) => {
+    return imagePath ? `${import.meta.env.BASE_URL}storage/${imagePath}` : "";
+};
 
 // Handle file upload
 const handleFileUpload = (event) => {

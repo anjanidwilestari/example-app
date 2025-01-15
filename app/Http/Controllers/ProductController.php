@@ -60,13 +60,22 @@ class ProductController extends Controller
         ]);
     }
     
-
     public function edit($id)
     {
-        $product = Product::with('features')->findOrFail($id);
+        // Fetch the product along with related features and galleries
+        $product = Product::with('features', 'galleries')->findOrFail($id);
+    
+        // Generate the full URL for each gallery image
+        $product->galleries->map(function ($gallery) {
+            $gallery->image_url = asset('storage/' . $gallery->image_path);
+            return $gallery;
+        });
+    
+        // Fetch categories and subcategories
         $categories = ProductCategory::all();
         $subCategories = ProductSubCategory::all();
-        
+    
+        // Pass the data to the edit view
         return inertia('Products/Edit', [
             'product' => $product,
             'categories' => $categories,
@@ -75,6 +84,7 @@ class ProductController extends Controller
             'galleries' => $product->galleries,
         ]);
     }
+    
 
 
     public function update(Request $request, $id)
@@ -137,71 +147,67 @@ class ProductController extends Controller
         // Return redirect or updated data
         return redirect()->route('products.edit', $productId);
     }
-    
-public function addGallery(Request $request, $productId)
+    public function addGallery(Request $request, $productId)
 {
-    // Validate the image
-    $validated = $request->validate([
+    // Validate the incoming request
+    $request->validate([
         'image' => 'required|image|mimes:jpg,jpeg,png,gif|max:2048',
     ]);
 
-    // Generate a unique file name to prevent overwriting
-    $fileName = time() . '-' . $request->file('image')->getClientOriginalName();
+    // Store the uploaded image in the 'product_images' folder in the 'public' disk
+    $imagePath = $request->file('image')->store('product_images', 'public');
 
-    // Store the uploaded image in the storage directory (public disk)
-    $path = $request->file('image')->storeAs('public/product_images', $fileName);
-
-    // Create a new gallery entry with the relative image path
+    // Create a new gallery entry
     ProductGallery::create([
         'product_id' => $productId,
-        'image_path' => 'storage/product_images/' . $fileName, // Save the relative path
+        'image_path' => $imagePath,  // Store the relative path
     ]);
 
-    // Redirect to the edit page for the product
+    // Redirect back to the product edit page with success message
     return redirect()->route('products.edit', $productId);
 }
+
+
     
 public function editGallery(Request $request, $productId, $galleryId)
 {
-    // Validate the image (optional)
-    $validated = $request->validate([
+    // Validate the incoming request for a nullable image
+    $request->validate([
         'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
     ]);
 
-    // Find the gallery by product ID and gallery ID
+    // Find the gallery entry by product ID and gallery ID
     $gallery = ProductGallery::where('product_id', $productId)->findOrFail($galleryId);
 
+    // If a new image is uploaded, process the image
     if ($request->hasFile('image')) {
-        // Delete the old image from the storage directory
-        $oldImagePath = storage_path('app/' . $gallery->image_path);
+        // Delete the old image from the public storage if exists
+        $oldImagePath = storage_path('app/public/' . $gallery->image_path);
         if (file_exists($oldImagePath)) {
             unlink($oldImagePath);
         }
 
-        // Generate a unique file name for the new image
-        $fileName = time() . '-' . $request->file('image')->getClientOriginalName();
-
-        // Store the new uploaded image in the storage directory
-        $path = $request->file('image')->storeAs('public/product_images', $fileName);
+        // Store the new uploaded image in 'product_images' folder in the public disk
+        $imagePath = $request->file('image')->store('product_images', 'public');
 
         // Update the gallery entry with the new image path
         $gallery->update([
-            'image_path' => 'storage/product_images/' . $fileName, // Update the relative path
+            'image_path' => $imagePath,  // Update the relative path
         ]);
     }
 
-    // Redirect to the edit page for the product
+    // Redirect to the product edit page
     return redirect()->route('products.edit', $productId);
 }
 public function deleteGallery($productId, $galleryId)
 {
-    // Fetch the gallery entry
+    // Find the gallery entry by product ID and gallery ID
     $gallery = ProductGallery::where('product_id', $productId)->findOrFail($galleryId);
 
-    // Get the path to the image file
-    $imagePath = storage_path('app/' . $gallery->image_path);
+    // Get the path of the image to delete
+    $imagePath = storage_path('app/public/' . $gallery->image_path);
 
-    // Check if the file exists and delete it
+    // Check if the image exists and delete it from the storage
     if (file_exists($imagePath)) {
         unlink($imagePath);
     }
@@ -209,7 +215,7 @@ public function deleteGallery($productId, $galleryId)
     // Delete the gallery entry from the database
     $gallery->delete();
 
-    // Redirect to the edit page for the product
+    // Redirect back to the product edit page
     return redirect()->route('products.edit', $productId);
 }
 
