@@ -180,7 +180,7 @@
                                 </div>
 
                                 <!-- Add new galleries product -->
-                                <div>
+                                <div class="mt-8">
                                     <h3 class="text-lg font-semibold">
                                         Product Galleries
                                     </h3>
@@ -361,6 +361,7 @@ const addGallery = () => {
         },
     });
 };
+
 const updateGallery = (gallery) => {
     const formData = new FormData();
     if (gallery.newImage) {

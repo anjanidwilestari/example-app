@@ -1,13 +1,13 @@
 <script setup>
+import { ref } from "vue";
 import { useForm } from "@inertiajs/vue3";
+import axios from "axios";
 import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
-import { ref } from "vue";
-import axios from "axios";
 
 // Inisialisasi form dengan data yang diperlukan
 const form = ref({
@@ -65,6 +65,21 @@ const submitForm = async () => {
         alert("Terjadi kesalahan, silakan coba lagi.");
         form.value.processing = false; // Reset status processing jika gagal
     }
+};
+
+// Fungsi untuk meng-clear form
+const clearForm = () => {
+    form.value = {
+        title: "",
+        author: "",
+        description: "",
+        image: null,
+        video: null,
+        audio: null,
+        errors: {},
+        processing: false,
+        recentlySuccessful: false,
+    };
 };
 </script>
 
@@ -189,11 +204,21 @@ const submitForm = async () => {
                                 />
                             </div>
 
-                            <!-- Submit Button -->
+                            <!-- Submit and Clear Button -->
                             <div class="flex items-center gap-4">
                                 <PrimaryButton :disabled="form.processing"
                                     >Save</PrimaryButton
                                 >
+
+                                <!-- Clear Button -->
+                                <PrimaryButton
+                                    type="button"
+                                    class="bg-gray-500"
+                                    @click="clearForm"
+                                    :disabled="form.processing"
+                                >
+                                    Clear
+                                </PrimaryButton>
 
                                 <Transition
                                     enter-active-class="transition ease-in-out"

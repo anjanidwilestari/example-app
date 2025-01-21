@@ -95,7 +95,11 @@ const performSearch = (e) => {
                                     Unduh
                                 </button>
                             </div>
-
+                            <inertia-link
+                                :href="route('books.create')"
+                                class="bg-blue-500 text-white px-4 py-2 rounded"
+                                >Tambah Buku</inertia-link
+                            >
                             <!-- Loading Spinner -->
                             <div id="loading" v-if="isLoading">
                                 <div class="spinner"></div>
