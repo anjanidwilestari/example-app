@@ -162,4 +162,44 @@ class BookController extends Controller
 
         return redirect()->route('books.index');
     }
+    public function audits($id)
+    {
+        $book = Book::findOrFail($id);
+        $audits = $book->audits()->with('user')->get(); // Mengambil audit dengan user
+
+        return response()->json($audits);
+    }
+    public function history($id)
+{
+    $book = Book::with('audits.user')->findOrFail($id);
+    return Inertia::render('Books/History', [
+        'book' => $book,
+        'audits' => $book->audits,
+    ]);
+}
+
+    public function latestAudit($id)
+{
+    $book = Book::findOrFail($id);
+    $audit = $book->audits()->latest()->first();
+
+    if (!$audit) {
+        return response()->json(['message' => 'No audit records found'], 404);
+    }
+
+    return response()->json($audit->getMetadata());
+}
+public function auditChanges($id)
+{
+    $book = Book::findOrFail($id);
+    $audit = $book->audits()->latest()->first();
+
+    if (!$audit) {
+        return response()->json(['message' => 'No audit records found'], 404);
+    }
+
+    return response()->json($audit->getModified());
+}
+
+
 }

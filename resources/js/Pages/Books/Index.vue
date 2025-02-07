@@ -221,6 +221,17 @@ const performSearch = (e) => {
                                             >
                                                 Hapus
                                             </button>
+                                            <inertia-link
+                                                :href="
+                                                    route(
+                                                        'books.history',
+                                                        book.id,
+                                                    )
+                                                "
+                                                class="bg-gray-500 text-white px-4 py-2 rounded"
+                                            >
+                                                Riwayat
+                                            </inertia-link>
                                         </td>
                                     </tr>
                                 </tbody>

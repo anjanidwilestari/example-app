@@ -66,6 +66,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/books/{book}/edit', [BookController::class, 'edit'])->name('books.edit');
     Route::post('/books/{book}', [BookController::class, 'update'])->name('books.update');
     Route::delete('/books/{book}', [BookController::class, 'destroy'])->name('books.destroy');
+    Route::get('/books/{id}/audits', [BookController::class, 'audits'])->name('books.audits');
+
+    Route::get('/books/{id}/latest-audit', [BookController::class, 'latestAudit']);
+    Route::get('/books/{id}/audit-changes', [BookController::class, 'auditChanges']);
+    Route::get('/books/{id}/history', [BookController::class, 'history'])->name('books.history');
+
+
+
+
 
     // Testimoni
     Route::get('/testimonis', [TestimoniController::class, 'index'])->name('testimonis.index');

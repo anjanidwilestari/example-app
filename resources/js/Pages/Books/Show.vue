@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
+import AuditList from "./AuditList.vue";
 
 // Prop Book yang diterima dari controller
 const props = defineProps({
@@ -108,6 +109,7 @@ const props = defineProps({
                                     element.
                                 </audio>
                             </div>
+                            <AuditList :bookId="book.id" class="mt-6" />
                         </div>
                     </div>
                 </div>
