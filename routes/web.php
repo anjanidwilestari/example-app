@@ -66,7 +66,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/books/{book}/edit', [BookController::class, 'edit'])->name('books.edit');
     Route::post('/books/{book}', [BookController::class, 'update'])->name('books.update');
     Route::delete('/books/{book}', [BookController::class, 'destroy'])->name('books.destroy');
-    Route::get('/books/audits', [BookController::class, 'auditLogs'])->name('books.audits');
+    Route::get('/books/history/all', [BookController::class, 'historyAll'])->name('books.history.all');
+
 
     Route::get('/books/{id}/history', [BookController::class, 'history'])->name('books.history');
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Book;
+use App\Models\Audit;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
@@ -162,13 +163,21 @@ class BookController extends Controller
 
         return redirect()->route('books.index');
     }
-    public function audits($id)
+   
+    
+    public function historyAll()
     {
-        $book = Book::findOrFail($id);
-        $audits = $book->audits()->with('user')->get(); // Mengambil audit dengan user
-
-        return response()->json($audits);
+        $audits = \OwenIt\Auditing\Models\Audit::with('user')
+            ->where('auditable_type', 'App\Models\Book') // Hanya ambil audit untuk buku
+            ->orderBy('created_at', 'desc')
+            ->get();
+    
+        return Inertia::render('Books/HistoryAll', [
+            'audits' => $audits,
+        ]);
     }
+    
+
     public function history($id)
 {
     $book = Book::with('audits.user')->findOrFail($id);
@@ -176,29 +185,6 @@ class BookController extends Controller
         'book' => $book,
         'audits' => $book->audits,
     ]);
-}
-
-    public function latestAudit($id)
-{
-    $book = Book::findOrFail($id);
-    $audit = $book->audits()->latest()->first();
-
-    if (!$audit) {
-        return response()->json(['message' => 'No audit records found'], 404);
-    }
-
-    return response()->json($audit->getMetadata());
-}
-public function auditChanges($id)
-{
-    $book = Book::findOrFail($id);
-    $audit = $book->audits()->latest()->first();
-
-    if (!$audit) {
-        return response()->json(['message' => 'No audit records found'], 404);
-    }
-
-    return response()->json($audit->getModified());
 }
 
 
